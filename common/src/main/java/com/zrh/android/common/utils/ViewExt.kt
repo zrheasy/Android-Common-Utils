@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import com.zrh.android.common.R
 
 /**
  *
@@ -18,10 +19,10 @@ import android.widget.TextView
 
 fun View.onClick(interval: Long = 300, onClick: () -> Unit) {
     setOnClickListener {
-        val tagId = 0x777
+        val tagId = R.id.view_click
         val now = System.currentTimeMillis()
         val lastClickTime = getTag(tagId) as? Long ?: 0
-        if (lastClickTime - now > interval) {
+        if (now - lastClickTime > interval) {
             setTag(tagId, now)
             onClick()
         }

@@ -22,7 +22,7 @@ object AppUtils {
     private lateinit var application: Application
 
     fun init(application: Application){
-        this.application = application
+        AppUtils.application = application
     }
 
     fun isMainProcess(): Boolean {

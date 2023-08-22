@@ -27,7 +27,7 @@ object NetUtils : ConnectivityManager.NetworkCallback() {
     private var networkType = NETWORK_TYPE_UNKNOWN
 
     fun init(context: Context) {
-        this.context = context.applicationContext
+        NetUtils.context = context.applicationContext
 
         networkType = getNetworkType()
 
