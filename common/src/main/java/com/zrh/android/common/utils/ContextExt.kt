@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -52,4 +53,8 @@ fun Context.drawable(@DrawableRes id: Int): Drawable? {
 
 fun Activity.getContentView(): View {
     return findViewById<ViewGroup>(Window.ID_ANDROID_CONTENT)
+}
+
+fun Context.toast(text: CharSequence) {
+    Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
 }

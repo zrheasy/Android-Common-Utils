@@ -13,5 +13,9 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
         binding.btnLanguage.onClick {
             startActivity(Intent(this, LanguageActivity::class.java))
         }
+
+        binding.btnList.onClick {
+            startActivity(Intent(this, ListActivity::class.java))
+        }
     }
 }
