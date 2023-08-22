@@ -17,5 +17,13 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
         binding.btnList.onClick {
             startActivity(Intent(this, ListActivity::class.java))
         }
+
+        binding.btnDialog.onClick {
+            TextDialog(this).show()
+        }
+
+        binding.btnBottomDialog.onClick {
+            BottomTextDialog(this).show()
+        }
     }
 }
