@@ -3,6 +3,7 @@ package com.zrh.android.common.utils
 import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.util.DisplayMetrics
 import android.view.View
 import android.view.ViewGroup
@@ -31,8 +32,11 @@ fun Context.sp2px(sp: Float): Int {
 }
 
 fun Context.getScreenSize(): IntArray {
-    val displayMetrics = DisplayMetrics()
     val wms = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+        return intArrayOf(wms.maximumWindowMetrics.bounds.width(), wms.maximumWindowMetrics.bounds.height())
+    }
+    val displayMetrics = DisplayMetrics()
     wms.defaultDisplay.getRealMetrics(displayMetrics)
     val width = displayMetrics.widthPixels
     val height = displayMetrics.heightPixels

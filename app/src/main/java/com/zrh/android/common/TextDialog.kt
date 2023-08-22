@@ -10,7 +10,7 @@ import com.zrh.android.common.widgets.BindingDialog
  * @date 2023/8/22
  *
  */
-class TextDialog(context: Context) : BindingDialog<DialogTextBinding>(context, R.style.DefaultDialog) {
+class TextDialog(context: Context) : BindingDialog<DialogTextBinding>(context) {
 
     init {
         setCancelable(true)

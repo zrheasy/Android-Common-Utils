@@ -52,11 +52,11 @@ abstract class ListDiffAdapter<VH : RecyclerView.ViewHolder, T> : RecyclerView.A
         result.dispatchUpdatesTo(this)
     }
 
-    protected fun areItemsTheSame(oldItem: T, newItem: T): Boolean {
+    protected open fun areItemsTheSame(oldItem: T, newItem: T): Boolean {
         return oldItem == newItem
     }
 
-    protected fun areContentsTheSame(oldItem: T, newItem: T): Boolean {
+    protected open fun areContentsTheSame(oldItem: T, newItem: T): Boolean {
         return oldItem == newItem
     }
 }

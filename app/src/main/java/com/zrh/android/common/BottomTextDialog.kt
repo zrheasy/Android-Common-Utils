@@ -7,6 +7,7 @@ import android.view.animation.TranslateAnimation
 import com.zrh.android.common.utils.databinding.DialogBottomBinding
 import com.zrh.android.common.utils.databinding.DialogTextBinding
 import com.zrh.android.common.widgets.BindingDialog
+import com.zrh.android.common.widgets.BottomDialog
 
 /**
  *
@@ -14,31 +15,7 @@ import com.zrh.android.common.widgets.BindingDialog
  * @date 2023/8/22
  *
  */
-class BottomTextDialog(context: Context) : BindingDialog<DialogBottomBinding>(context, R.style.DefaultDialog) {
+class BottomTextDialog(context: Context) : BottomDialog<DialogBottomBinding>(context) {
 
-    init {
-        setCancelable(true)
-    }
 
-    override fun getContentInAnimation(): Animation {
-        return TranslateAnimation(
-            Animation.RELATIVE_TO_SELF, 0f,
-            Animation.RELATIVE_TO_SELF, 0f,
-            Animation.RELATIVE_TO_SELF, 1f,
-            Animation.RELATIVE_TO_SELF, 0f,
-        ).apply {
-            duration = getAnimationDuration()
-        }
-    }
-
-    override fun getContentOutAnimation(): Animation {
-        return TranslateAnimation(
-            Animation.RELATIVE_TO_SELF, 0f,
-            Animation.RELATIVE_TO_SELF, 0f,
-            Animation.RELATIVE_TO_SELF, 0f,
-            Animation.RELATIVE_TO_SELF, 1f,
-        ).apply {
-            duration = getAnimationDuration()
-        }
-    }
 }

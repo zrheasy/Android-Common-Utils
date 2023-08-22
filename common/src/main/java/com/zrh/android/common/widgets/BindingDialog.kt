@@ -4,13 +4,14 @@ import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.view.*
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.widget.FrameLayout
 import androidx.viewbinding.ViewBinding
-import com.zrh.android.common.utils.ViewBindingHelper
-import com.zrh.android.common.utils.onClick
+import com.zrh.android.common.R
+import com.zrh.android.common.utils.*
 
 /**
  *
@@ -18,7 +19,7 @@ import com.zrh.android.common.utils.onClick
  * @date 2023/8/22
  *
  */
-abstract class BindingDialog<VB : ViewBinding>(context: Context, theme: Int) : Dialog(context, theme) {
+abstract class BindingDialog<VB : ViewBinding>(context: Context) : Dialog(context, R.style.DefaultDialog) {
     private var rootLayout: FrameLayout
     private var maskView: View
     private var binding: VB
@@ -26,8 +27,7 @@ abstract class BindingDialog<VB : ViewBinding>(context: Context, theme: Int) : D
 
     init {
         rootLayout = FrameLayout(context).apply {
-            layoutParams =
-                ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setContentView(this)
         }
 
@@ -43,20 +43,24 @@ abstract class BindingDialog<VB : ViewBinding>(context: Context, theme: Int) : D
         }
 
         binding = onCreateViewBinding(layoutInflater, rootLayout)
+        binding.root.onClick {  }
         rootLayout.addView(binding.root)
 
         window?.apply {
-            val p = attributes
-            p.width = WindowManager.LayoutParams.MATCH_PARENT
-            p.height = WindowManager.LayoutParams.WRAP_CONTENT
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+            }
         }
+        setSystemBar()
     }
 
-    protected fun onCreateViewBinding(layoutInflater: LayoutInflater, parent: ViewGroup): VB {
+    protected open fun onCreateViewBinding(layoutInflater: LayoutInflater, parent: ViewGroup): VB {
         return ViewBindingHelper.binding(this, layoutInflater, parent, false)
     }
 
-    override fun setCancelable(flag: Boolean) {
+    final override fun setCancelable(flag: Boolean) {
         super.setCancelable(flag)
         cancelable = flag
     }

@@ -26,7 +26,7 @@ abstract class BindingFragment<VB : ViewBinding>:LazyFragment() {
         return binding.root
     }
 
-    protected fun onCreateViewBinding(inflater: LayoutInflater, container: ViewGroup?):VB{
+    protected open fun onCreateViewBinding(inflater: LayoutInflater, container: ViewGroup?):VB{
         return ViewBindingHelper.binding(this, layoutInflater, container)
     }
 
