@@ -6,14 +6,12 @@ import com.zrh.android.common.utils.LocaleUtils
 import com.zrh.android.common.utils.databinding.ActivityLanguageBinding
 import com.zrh.android.common.utils.databinding.ActivityMainBinding
 import com.zrh.android.common.utils.onClick
+import com.zrh.android.common.widgets.BindingActivity
 import java.util.*
 
-class LanguageActivity : AppCompatActivity() {
-    private lateinit var binding:ActivityLanguageBinding
+class LanguageActivity : BindingActivity<ActivityLanguageBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLanguageBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
         binding.btnEnglish.onClick {
             LocaleUtils.setLocale(Locale.ENGLISH)
