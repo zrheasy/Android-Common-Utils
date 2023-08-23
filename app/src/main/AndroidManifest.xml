@@ -28,6 +28,7 @@
         </activity>
         <activity android:name="com.zrh.android.common.LanguageActivity" />
         <activity android:name="com.zrh.android.common.ListActivity" />
+        <activity android:name="com.zrh.android.common.CounterActivity" />
     </application>
 
 </manifest>

@@ -12,31 +12,26 @@
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent">
         <Button
-            android:id="@+id/btnLanguage"
+            android:id="@+id/btnAdd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="语言"/>
+            android:text="加"/>
         <Button
-            android:id="@+id/btnList"
+            android:id="@+id/btnSubtract"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="列表"/>
-        <Button
-            android:id="@+id/btnDialog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="弹窗"/>
-        <Button
-            android:id="@+id/btnBottomDialog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="底部弹窗"/>
-        <Button
-            android:id="@+id/btnBus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="事件总线"/>
+            android:text="减"/>
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tvCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:text="0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
