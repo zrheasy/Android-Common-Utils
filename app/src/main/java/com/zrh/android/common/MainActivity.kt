@@ -1,7 +1,9 @@
 package com.zrh.android.common
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import androidx.core.widget.addTextChangedListener
 import com.zrh.android.common.event.CounterEvent
 import com.zrh.android.common.utils.AndroidBus
 import com.zrh.android.common.utils.databinding.ActivityMainBinding
@@ -33,10 +35,13 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
             startActivity(Intent(this, CounterActivity::class.java))
         }
 
-        AndroidBus.receiver(this){
-            subscribe(CounterEvent::class.java){
+        AndroidBus.receiver(this) {
+            subscribe(CounterEvent::class.java) {
                 toast("收到事件通知：$it")
             }
         }
+
+        binding.expandTextView.setExpandText("More>>", Color.BLUE)
+        binding.editText.addTextChangedListener { binding.expandTextView.text = it.toString() }
     }
 }
