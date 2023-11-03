@@ -33,7 +33,7 @@ fun Context.sp2px(sp: Float): Int {
 
 fun Context.getScreenSize(): IntArray {
     val wms = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         return intArrayOf(wms.maximumWindowMetrics.bounds.width(), wms.maximumWindowMetrics.bounds.height())
     }
     val displayMetrics = DisplayMetrics()
@@ -59,6 +59,8 @@ fun Activity.getContentView(): View {
     return findViewById<ViewGroup>(Window.ID_ANDROID_CONTENT)
 }
 
+private var sToast: Toast? = null
 fun Context.toast(text: CharSequence) {
-    Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+    sToast?.cancel()
+    sToast = Toast.makeText(applicationContext, text, Toast.LENGTH_SHORT).apply { show() }
 }

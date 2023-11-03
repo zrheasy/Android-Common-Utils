@@ -11,44 +11,55 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent">
+
         <Button
             android:id="@+id/btnLanguage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="语言"/>
+            android:text="语言" />
+
         <Button
             android:id="@+id/btnList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="列表"/>
+            android:text="列表" />
+
         <Button
             android:id="@+id/btnDialog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="弹窗"/>
+            android:text="弹窗" />
+
         <Button
             android:id="@+id/btnBottomDialog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="底部弹窗"/>
+            android:text="底部弹窗" />
+
         <Button
             android:id="@+id/btnBus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="事件总线"/>
+            android:text="事件总线" />
 
-        <EditText
-            android:id="@+id/editText"
-            android:textColor="@color/black"
+        <Button
+            android:id="@+id/btnRedPacket"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="红包雨" />
 
-        <com.zrh.android.common.widgets.ExpandTextView
+        <Button
+            android:id="@+id/btnRedPacketPause"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="红包雨暂停/播放" />
+
+        <TextView
             android:id="@+id/expandTextView"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:maxLines="2"
-            />
+            android:textColor="@color/black"
+            tools:ignore="HardcodedText" />
     </LinearLayout>
 
 
