@@ -8,7 +8,10 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
+import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import com.zrh.android.common.event.CounterEvent
@@ -101,6 +104,35 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
             mRainLayout.start(list)
         }
         binding.btnRedPacketPause.onClick { mRainLayout.pauseOrResume() }
+
+        binding.marqueeLayout.setData(getTextList())
+        binding.marqueeLayout.setOnBindView { data, view ->
+            val textView = view as TextView
+            textView.text = data.toString()
+        }
+        binding.marqueeLayout.setViewFactory {
+            val textView = AppCompatTextView(this)
+            textView.layoutParams =
+                MarginLayoutParams(MarginLayoutParams.WRAP_CONTENT, MarginLayoutParams.MATCH_PARENT)
+                    .apply {
+                        marginEnd = dp2px(10f)
+                        marginStart = dp2px(10f)
+                    }
+            textView.gravity = Gravity.CENTER_VERTICAL
+            textView.textSize = 14f
+            textView.setTextColor(Color.BLACK)
+            textView.maxLines = 1
+            return@setViewFactory textView
+        }
+    }
+
+    private fun getTextList(): List<String> {
+        val text = "Start0123456789012345678901234567845678901234567890123456789End"
+        return mutableListOf<String>().apply {
+            for (i in 0..1) {
+                add(text)
+            }
+        }
     }
 
     private fun setExpandText(text: String) {
