@@ -1,7 +1,9 @@
 package com.zrh.android.common.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Typeface
+import android.os.Build
 import android.text.*
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.LinkMovementMethod
@@ -13,6 +15,8 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import com.zrh.android.common.R
+import org.jbox2d.common.Vec2
+import org.jbox2d.dynamics.Body
 
 /**
  *
@@ -76,6 +80,7 @@ fun EditText.setPassword(isPassword: Boolean) {
     }
 }
 
+@SuppressLint("WrongConstant")
 fun TextView.setExpandText(
     content: String,
     maxLine: Int,
@@ -83,6 +88,11 @@ fun TextView.setExpandText(
     expandTextColor: Int? = null,
     onExpandClick: (() -> Unit)? = null
 ) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        breakStrategy = Layout.BREAK_STRATEGY_SIMPLE
+        hyphenationFrequency = Layout.HYPHENATION_FREQUENCY_NONE
+    }
+
     val ellipsis = "..."
     post {
         val staticLayout =
@@ -101,7 +111,7 @@ fun TextView.setExpandText(
             val replaceText = content.substring(replaceStart, replaceStart+1)
             exceededWidth -= paint.measureText(replaceText)
         }
-        val displayText = content.substring(0, replaceStart - 1) + endText
+        val displayText = content.substring(0, replaceStart) + endText
         val displaySpan = SpannableString(displayText)
         if (expandTextColor != null) {
             val start = displayText.indexOf(expandText)
@@ -115,7 +125,7 @@ fun TextView.setExpandText(
                 }
 
                 override fun updateDrawState(ds: TextPaint) {
-
+                    ds.isUnderlineText = false
                 }
             }
             val start = displayText.indexOf(expandText)
@@ -127,7 +137,12 @@ fun TextView.setExpandText(
     }
 }
 
+@SuppressLint("WrongConstant")
 fun TextView.setCloseText(content: String, closeText: String, closeTextColor: Int? = null, onCloseClick: (() -> Unit)? = null) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        breakStrategy = Layout.BREAK_STRATEGY_SIMPLE
+        hyphenationFrequency = Layout.HYPHENATION_FREQUENCY_NONE
+    }
     post {
         val displayText = "$content $closeText"
         val displaySpan = SpannableString(displayText)
@@ -143,7 +158,7 @@ fun TextView.setCloseText(content: String, closeText: String, closeTextColor: In
                 }
 
                 override fun updateDrawState(ds: TextPaint) {
-
+                    ds.isUnderlineText = false
                 }
             }
             val start = displayText.indexOf(closeText)
@@ -154,3 +169,18 @@ fun TextView.setCloseText(content: String, closeText: String, closeTextColor: In
         text = displaySpan
     }
 }
+
+/**
+ * 随手机的转动，施加相应的矢量
+ * @param x x 轴方向的分量
+ * @param y y 轴方向的分量
+ */
+fun ViewGroup.onSensorChanged(x: Float, y: Float) {
+    val impulse = Vec2(x, y)
+    for (i in 0..this.childCount) {
+        val view: View? = this.getChildAt(i)
+        val body = view?.getTag(R.id.physics_layout_body_tag) as? Body
+        body?.applyLinearImpulse(impulse, body.position)
+    }
+}
+

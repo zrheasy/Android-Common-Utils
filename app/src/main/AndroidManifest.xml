@@ -29,6 +29,10 @@
         <activity android:name="com.zrh.android.common.LanguageActivity" />
         <activity android:name="com.zrh.android.common.ListActivity" />
         <activity android:name="com.zrh.android.common.CounterActivity" />
+        <activity android:name="com.zrh.android.common.PhysicsActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.zrh.android.common.RainActivity" />
+        <activity android:name="com.zrh.android.common.MarqueeActivity" />
+        <activity android:name="com.zrh.android.common.ExpandTextActivity" />
     </application>
 
 </manifest>

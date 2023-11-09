@@ -25,12 +25,40 @@ class MarqueeLayout(context: Context, attributeSet: AttributeSet?) : FrameLayout
 
     private var duration = 3000
     private var speed = 0f
+    private var running = true
+    private var pauseTime = 0L
 
     private val mChoreographer = Choreographer.getInstance()
     private val mFrameCallback: FrameCallback = object : FrameCallback {
         override fun doFrame(frameTimeNanos: Long) {
-            onFrame()
-            mChoreographer.postFrameCallback(this)
+            if (running){
+                onFrame()
+                mChoreographer.postFrameCallback(this)
+            }
+        }
+    }
+
+    fun isRunning():Boolean = running
+
+    fun pause(){
+        if (running){
+            running = false
+            mChoreographer.removeFrameCallback(mFrameCallback)
+            pauseTime = System.currentTimeMillis()
+        }
+    }
+
+    fun resume(){
+        if (!running){
+            running = true
+            mChoreographer.postFrameCallback(mFrameCallback)
+            // update view time
+            val stayTime = System.currentTimeMillis() - pauseTime
+            for (i in 0 until childCount) {
+                val view = getChildAt(i)
+                val startTime = view.tag as? Long ?: 0
+                view.tag = startTime + stayTime
+            }
         }
     }
 
