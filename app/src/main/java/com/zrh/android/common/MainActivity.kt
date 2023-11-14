@@ -62,6 +62,10 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
             startActivity(Intent(this, ExpandTextActivity::class.java))
         }
 
+        binding.btnHeartView.onClick {
+            startActivity(Intent(this, HeartViewActivity::class.java))
+        }
+
         AndroidBus.receiver(this) {
             subscribe(CounterEvent::class.java) {
                 toast("收到事件通知：$it")

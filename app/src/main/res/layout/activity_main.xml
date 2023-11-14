@@ -66,6 +66,12 @@
             android:layout_height="wrap_content"
             android:text="物理盒子" />
 
+        <Button
+            android:id="@+id/btnHeartView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="HeartView" />
+
     </LinearLayout>
 
 
