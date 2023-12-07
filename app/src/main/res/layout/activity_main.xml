@@ -72,6 +72,12 @@
             android:layout_height="wrap_content"
             android:text="HeartView" />
 
+        <Button
+            android:id="@+id/btnWhatsapp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Whatsapp" />
+
     </LinearLayout>
 
 

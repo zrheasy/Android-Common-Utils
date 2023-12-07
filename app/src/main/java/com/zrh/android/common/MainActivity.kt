@@ -66,6 +66,10 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
             startActivity(Intent(this, HeartViewActivity::class.java))
         }
 
+        binding.btnWhatsapp.onClick {
+            startActivity(Intent(this, WhatsappActivity::class.java))
+        }
+
         AndroidBus.receiver(this) {
             subscribe(CounterEvent::class.java) {
                 toast("收到事件通知：$it")
