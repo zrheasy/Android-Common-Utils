@@ -78,6 +78,12 @@
             android:layout_height="wrap_content"
             android:text="Whatsapp" />
 
+        <Button
+            android:id="@+id/btnDownload"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Download" />
+
     </LinearLayout>
 
 

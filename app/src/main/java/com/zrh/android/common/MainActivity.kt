@@ -19,6 +19,13 @@ import com.zrh.android.common.utils.*
 import com.zrh.android.common.utils.databinding.ActivityMainBinding
 import com.zrh.android.common.widgets.BindingActivity
 import com.zrh.android.common.widgets.RainLayout
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
+import java.io.FileWriter
 
 class MainActivity : BindingActivity<ActivityMainBinding>() {
 
@@ -70,11 +77,30 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
             startActivity(Intent(this, WhatsappActivity::class.java))
         }
 
+        binding.btnDownload.onClick {
+            download()
+        }
+
         AndroidBus.receiver(this) {
             subscribe(CounterEvent::class.java) {
                 toast("收到事件通知：$it")
             }
         }
 
+    }
+
+    private fun download() {
+        GlobalScope.launch(Dispatchers.IO){
+            try {
+                val file = File(cacheDir, "test.txt")
+                val fileWriter = FileWriter(file)
+                fileWriter.write("Hello World!")
+                fileWriter.close()
+                FileUtils.saveFileToDownload(applicationContext, file, "text/*", "Common")
+                withContext(Dispatchers.Main){toast("Success")}
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main){toast("Error: $e")}
+            }
+        }
     }
 }
