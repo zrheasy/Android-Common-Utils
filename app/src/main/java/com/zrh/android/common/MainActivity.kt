@@ -81,6 +81,11 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
             download()
         }
 
+        binding.btnScrollView.onClick {
+            startActivity(Intent(this, ScrollViewActivity::class.java))
+        }
+
+
         AndroidBus.receiver(this) {
             subscribe(CounterEvent::class.java) {
                 toast("收到事件通知：$it")
@@ -90,16 +95,16 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
     }
 
     private fun download() {
-        GlobalScope.launch(Dispatchers.IO){
+        GlobalScope.launch(Dispatchers.IO) {
             try {
                 val file = File(cacheDir, "test.txt")
                 val fileWriter = FileWriter(file)
                 fileWriter.write("Hello World!")
                 fileWriter.close()
                 FileUtils.saveFileToDownload(applicationContext, file, "text/*", "Common")
-                withContext(Dispatchers.Main){toast("Success")}
+                withContext(Dispatchers.Main) { toast("Success") }
             } catch (e: Exception) {
-                withContext(Dispatchers.Main){toast("Error: $e")}
+                withContext(Dispatchers.Main) { toast("Error: $e") }
             }
         }
     }
