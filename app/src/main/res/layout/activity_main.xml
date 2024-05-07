@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context="com.zrh.android.common.MainActivity">
 
     <LinearLayout
@@ -105,6 +106,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="切换环境" />
+
+        <Button
+            android:id="@+id/btnDialogQueue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="弹窗队列" />
     </LinearLayout>
 
 

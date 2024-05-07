@@ -1,34 +1,22 @@
 package com.zrh.android.common
 
-import android.animation.Animator
-import android.animation.Animator.AnimatorListener
-import android.animation.ObjectAnimator
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.view.Gravity
-import android.view.ViewGroup
-import android.view.ViewGroup.MarginLayoutParams
-import android.widget.FrameLayout
-import android.widget.TextView
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import com.zrh.android.common.env.AppEnvManager
 import com.zrh.android.common.event.CounterEvent
 import com.zrh.android.common.utils.*
 import com.zrh.android.common.utils.databinding.ActivityMainBinding
 import com.zrh.android.common.widgets.BindingActivity
-import com.zrh.android.common.widgets.RainLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileOutputStream
 import java.io.FileWriter
 
 class MainActivity : BindingActivity<ActivityMainBinding>() {
+
+    private val mDialogQueueManager by lazy { DialogQueueManager(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,6 +77,10 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
             switchEnv()
         }
 
+        binding.btnDialogQueue.onClick {
+            showDialogQueue()
+        }
+
         AndroidBus.receiver(this) {
             subscribe(CounterEvent::class.java) {
                 toast("收到事件通知：$it")
@@ -96,16 +88,22 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
         }
 
         val env = AppEnvManager.getEnv()
-        val envType = if (AppEnvManager.isDebugEnv())"debug" else "release"
-        binding.tvEnv.text = "env: $envType\n" +
-                "apiBaseUrl: ${env.getBaseApiUrl()}\n" +
-                "h5BaseUrl: ${env.getBaseH5Url()}"
+        val envType = if (AppEnvManager.isDebugEnv()) "debug" else "release"
+        binding.tvEnv.text =
+            "env: $envType\n" + "apiBaseUrl: ${env.getBaseApiUrl()}\n" + "h5BaseUrl: ${env.getBaseH5Url()}"
+    }
+
+    private fun showDialogQueue() {
+        mDialogQueueManager.showDialog(1, TestDialog().apply { count = 1 })
+        mDialogQueueManager.showDialog(3, TestDialog().apply { count = 3 })
+        mDialogQueueManager.showDialog(2, TestDialog().apply { count = 2 })
+        mDialogQueueManager.showDialog(4, TestDialog().apply { count = 4 })
     }
 
     private fun switchEnv() {
-        if (AppEnvManager.isDebugEnv()){
+        if (AppEnvManager.isDebugEnv()) {
             AppEnvManager.switchReleaseEnv()
-        }else{
+        } else {
             AppEnvManager.switchDebugEnv()
         }
         AppUtils.restart(this, MainActivity::class.java)
