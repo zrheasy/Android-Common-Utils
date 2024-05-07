@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import com.zrh.android.common.env.AppEnvManager
 import com.zrh.android.common.event.CounterEvent
 import com.zrh.android.common.utils.*
 import com.zrh.android.common.utils.databinding.ActivityMainBinding
@@ -29,7 +30,6 @@ import java.io.FileWriter
 
 class MainActivity : BindingActivity<ActivityMainBinding>() {
 
-    private lateinit var mRainLayout: RainLayout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -85,6 +85,9 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
             startActivity(Intent(this, ScrollViewActivity::class.java))
         }
 
+        binding.btnSwitchEnv.onClick {
+            switchEnv()
+        }
 
         AndroidBus.receiver(this) {
             subscribe(CounterEvent::class.java) {
@@ -92,6 +95,20 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
             }
         }
 
+        val env = AppEnvManager.getEnv()
+        val envType = if (AppEnvManager.isDebugEnv())"debug" else "release"
+        binding.tvEnv.text = "env: $envType\n" +
+                "apiBaseUrl: ${env.getBaseApiUrl()}\n" +
+                "h5BaseUrl: ${env.getBaseH5Url()}"
+    }
+
+    private fun switchEnv() {
+        if (AppEnvManager.isDebugEnv()){
+            AppEnvManager.switchReleaseEnv()
+        }else{
+            AppEnvManager.switchDebugEnv()
+        }
+        AppUtils.restart(this, MainActivity::class.java)
     }
 
     private fun download() {

@@ -21,7 +21,7 @@ object AppUtils {
 
     private lateinit var application: Application
 
-    fun init(application: Application){
+    fun init(application: Application) {
         AppUtils.application = application
     }
 
@@ -93,15 +93,34 @@ object AppUtils {
             intent.addCategory(Intent.CATEGORY_LAUNCHER)
             application.startActivity(intent)
             return true
-        } catch (_: Exception) { }
+        } catch (_: Exception) {
+        }
         return false
     }
 
     fun openMarket(packageName: String) {
         try {
-            application.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
+            application.startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=$packageName")
+                )
+            )
         } catch (e: Exception) {
-            application.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
+            application.startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+                )
+            )
         }
+    }
+
+
+    fun restart(context: Context, cls: Class<*>) {
+        val intent = Intent(context, cls)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+        Process.killProcess(Process.myPid())
     }
 }
