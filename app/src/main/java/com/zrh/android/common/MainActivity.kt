@@ -81,6 +81,10 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
             showDialogQueue()
         }
 
+        binding.btnVerticalPager.onClick {
+            startActivity(Intent(this, VerticalPagerActivity::class.java))
+        }
+
         AndroidBus.receiver(this) {
             subscribe(CounterEvent::class.java) {
                 toast("收到事件通知：$it")

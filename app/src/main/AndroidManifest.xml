@@ -38,6 +38,7 @@
         <activity android:name="com.zrh.android.common.HeartViewActivity" />
         <activity android:name="com.zrh.android.common.WhatsappActivity" />
         <activity android:name="com.zrh.android.common.ScrollViewActivity" />
+        <activity android:name="com.zrh.android.common.VerticalPagerActivity" />
     </application>
 
 </manifest>
