@@ -118,6 +118,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="VerticalPager" />
+
+        <Button
+            android:id="@+id/btnOutline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Outline" />
     </LinearLayout>
 
 

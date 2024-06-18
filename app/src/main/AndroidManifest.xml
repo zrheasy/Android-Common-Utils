@@ -39,6 +39,7 @@
         <activity android:name="com.zrh.android.common.WhatsappActivity" />
         <activity android:name="com.zrh.android.common.ScrollViewActivity" />
         <activity android:name="com.zrh.android.common.VerticalPagerActivity" />
+        <activity android:name="com.zrh.android.common.OutlineActivity" />
     </application>
 
 </manifest>

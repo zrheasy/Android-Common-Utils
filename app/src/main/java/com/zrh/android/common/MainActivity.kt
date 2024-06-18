@@ -85,6 +85,10 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
             startActivity(Intent(this, VerticalPagerActivity::class.java))
         }
 
+        binding.btnOutline.onClick {
+            startActivity(Intent(this, OutlineActivity::class.java))
+        }
+
         AndroidBus.receiver(this) {
             subscribe(CounterEvent::class.java) {
                 toast("收到事件通知：$it")
