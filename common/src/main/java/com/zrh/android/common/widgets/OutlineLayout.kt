@@ -8,9 +8,7 @@ import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 
@@ -20,10 +18,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
  * @date 2024/6/18
  *
  */
-class OutlineLayout(
-    context: Context,
-    attrs: AttributeSet? = null,
-) : ConstraintLayout(context, attrs, 0) {
+class OutlineLayout : ConstraintLayout {
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
 
     private var outlineRadius = 10f
     private var outlineColor = Color.WHITE
@@ -37,7 +38,6 @@ class OutlineLayout(
     private val tvTitle: TextView = TextView(context)
 
     init {
-        clipChildren = false
         initTitleView()
         initPaint()
     }
@@ -51,7 +51,7 @@ class OutlineLayout(
         cutoutPaint.color = outlineColor
         cutoutPaint.setXfermode(PorterDuffXfermode(PorterDuff.Mode.DST_OUT))
 
-        setLayerType(LAYER_TYPE_SOFTWARE, null)
+//        setLayerType(LAYER_TYPE_SOFTWARE, null)
     }
 
     private fun initTitleView() {
@@ -100,13 +100,9 @@ class OutlineLayout(
         canvas.restoreToCount(layer)
     }
 
-    private fun saveCanvasLayer(canvas: Canvas):Int {
+    private fun saveCanvasLayer(canvas: Canvas): Int {
         return canvas.saveLayer(
-            0.0f,
-            0.0f,
-            canvas.width.toFloat(),
-            canvas.height.toFloat(),
-            null as Paint?
+            0.0f, 0.0f, canvas.width.toFloat(), canvas.height.toFloat(), null as Paint?
         )
     }
 }
