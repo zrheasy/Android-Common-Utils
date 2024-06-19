@@ -89,6 +89,10 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
             startActivity(Intent(this, OutlineActivity::class.java))
         }
 
+        binding.btnBanner.onClick {
+            startActivity(Intent(this, BannerActivity::class.java))
+        }
+
         AndroidBus.receiver(this) {
             subscribe(CounterEvent::class.java) {
                 toast("收到事件通知：$it")
