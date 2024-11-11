@@ -2,6 +2,11 @@ package com.zrh.android.common
 
 import android.content.Intent
 import android.os.Bundle
+import com.didichuxing.doraemonkit.DoKit
+import com.didichuxing.doraemonkit.kit.performance.PerformanceDokitView
+import com.didichuxing.doraemonkit.kit.performance.PerformanceDokitViewManager
+import com.didichuxing.doraemonkit.kit.performance.PerformanceFragment
+import com.didichuxing.doraemonkit.kit.toolpanel.ToolPanelDoKitView
 import com.zrh.android.common.env.AppEnvManager
 import com.zrh.android.common.event.CounterEvent
 import com.zrh.android.common.utils.*
@@ -20,6 +25,10 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        binding.btnPerformance.onClick {
+            DoKit.showToolPanel()
+        }
 
         binding.btnLanguage.onClick {
             startActivity(Intent(this, LanguageActivity::class.java))

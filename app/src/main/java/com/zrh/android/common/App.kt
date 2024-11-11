@@ -5,6 +5,7 @@ import android.app.Application
 import android.app.Application.ActivityLifecycleCallbacks
 import android.content.Context
 import android.os.Bundle
+import com.didichuxing.doraemonkit.DoKit
 import com.zrh.android.common.env.AppEnvManager
 import com.zrh.android.common.utils.LocaleUtils
 import com.zrh.android.common.utils.setSystemBar
@@ -25,6 +26,10 @@ class App : Application() ,ActivityLifecycleCallbacks {
         registerActivityLifecycleCallbacks(this)
 
         AppEnvManager.init(this, BuildConfig.DEBUG)
+
+        DoKit.Builder(this)
+            .alwaysShowMainIcon(false)
+            .build()
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {

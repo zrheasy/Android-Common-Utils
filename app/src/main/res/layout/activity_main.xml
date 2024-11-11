@@ -24,6 +24,12 @@
             />
 
         <Button
+            android:id="@+id/btnPerformance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="调试面板" />
+
+        <Button
             android:id="@+id/btnLanguage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
