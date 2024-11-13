@@ -26,6 +26,17 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        AndroidBus.receiver(this) {
+            subscribe(CounterEvent::class.java) {
+                toast("收到事件通知：$it")
+            }
+        }
+
+        val env = AppEnvManager.getEnv()
+        val envType = if (AppEnvManager.isDebugEnv()) "debug" else "release"
+        binding.tvEnv.text =
+            "env: $envType\n" + "apiBaseUrl: ${env.getBaseApiUrl()}\n" + "h5BaseUrl: ${env.getBaseH5Url()}"
+
         binding.btnPerformance.onClick {
             DoKit.showToolPanel()
         }
@@ -102,16 +113,9 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
             startActivity(Intent(this, BannerActivity::class.java))
         }
 
-        AndroidBus.receiver(this) {
-            subscribe(CounterEvent::class.java) {
-                toast("收到事件通知：$it")
-            }
+        binding.btnAnim.onClick {
+            startActivity(Intent(this, AnimActivity::class.java))
         }
-
-        val env = AppEnvManager.getEnv()
-        val envType = if (AppEnvManager.isDebugEnv()) "debug" else "release"
-        binding.tvEnv.text =
-            "env: $envType\n" + "apiBaseUrl: ${env.getBaseApiUrl()}\n" + "h5BaseUrl: ${env.getBaseH5Url()}"
     }
 
     private fun showDialogQueue() {
