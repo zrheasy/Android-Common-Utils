@@ -56,8 +56,9 @@ dependencies {
     implementation 'com.android.volley:volley:1.2.0'
 
     implementation "io.github.tencent:vap:2.0.28"
+    implementation 'com.tencent.tav:libpag:4.4.12'
+
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     implementation "com.github.bumptech.glide:okhttp3-integration:4.16.0"
     kapt "com.github.bumptech.glide:compiler:4.16.0"
-//    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 }

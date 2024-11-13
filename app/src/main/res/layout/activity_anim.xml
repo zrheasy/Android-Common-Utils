@@ -35,6 +35,11 @@
             android:id="@+id/vapView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+
+        <org.libpag.PAGImageView
+            android:id="@+id/pagView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </FrameLayout>
 
 

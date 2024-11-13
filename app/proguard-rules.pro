@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# PAG混淆规则
+-keep class org.libpag.** {*;}
+-keep class androidx.exifinterface.** {*;}

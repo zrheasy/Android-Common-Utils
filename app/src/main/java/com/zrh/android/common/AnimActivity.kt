@@ -6,6 +6,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -22,26 +23,76 @@ import com.zrh.android.common.utils.databinding.ActivityAnimBinding
 import com.zrh.android.common.utils.onClick
 import com.zrh.android.common.widgets.BindingActivity
 import com.zrh.android.common.utils.R
+import org.libpag.PAGImageView
+import org.libpag.PAGImageView.PAGImageViewListener
 import java.io.File
 
 class AnimActivity : BindingActivity<ActivityAnimBinding>() {
+
+    private var pagIndex = 0
+    private val pagResources = arrayOf(
+        "http://smvuqx8z8.hn-bkt.clouddn.com/excuse-1685519153531.pag.pag.pag?e=1731504439&token=7pyxNuVMvpNtJZyxNAHwKMuonQcvOAsEC3pwT_Y8:sWe32KWzkdeaWWLHF1GCBV7r-oQ=",
+        "http://smvuqx8z8.hn-bkt.clouddn.com/OMG.pag.pag?e=1731503219&token=7pyxNuVMvpNtJZyxNAHwKMuonQcvOAsEC3pwT_Y8:Fc_EnPgo5HECZN2CeiimLIQHq90=",
+    )
+    private val pagListener = object : PAGImageViewListener {
+        override fun onAnimationStart(view: PAGImageView?) {
+            Log.d("PAG", "onAnimationStart ${Thread.currentThread()}")
+        }
+
+        override fun onAnimationEnd(view: PAGImageView?) {
+            Log.d("PAG", "onAnimationEnd ${Thread.currentThread()}")
+            runOnUiThread { view?.isVisible = false }
+        }
+
+        override fun onAnimationCancel(view: PAGImageView?) {
+            Log.d("PAG", "onAnimationCancel ${Thread.currentThread()}")
+            runOnUiThread { view?.isVisible = false }
+        }
+
+        override fun onAnimationRepeat(view: PAGImageView?) {
+            Log.d("PAG", "onAnimationRepeat ${Thread.currentThread()}")
+        }
+
+        override fun onAnimationUpdate(view: PAGImageView?) {
+            Log.d("PAG", "onAnimationUpdate ${Thread.currentThread()}")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         initVapView()
+        initPagView()
 
         binding.btnVap.onClick {
             playVap()
         }
 
+        binding.btnPag.onClick {
+            playPag()
+        }
+
+    }
+
+    private fun playPag() {
+        val url = pagResources[pagIndex++ % pagResources.size]
+        download(url) {
+            binding.pagView.setPath(it.path)
+            binding.pagView.play()
+            binding.pagView.isVisible = true
+        }
+    }
+
+    private fun initPagView() {
+        binding.pagView.setRepeatCount(1)
+        binding.pagView.addListener(pagListener)
     }
 
     private fun initVapView() {
         binding.vapView.setScaleType(ScaleType.CENTER_CROP)
 
         // 回调在VAP子线程中
-        binding.vapView.setAnimListener(object : IAnimListener{
+        binding.vapView.setAnimListener(object : IAnimListener {
             override fun onFailed(errorType: Int, errorMsg: String?) {
                 Log.d("VAP", "onFailed: $errorType $errorMsg ${Thread.currentThread()}")
             }
@@ -63,13 +114,13 @@ class AnimActivity : BindingActivity<ActivityAnimBinding>() {
             }
 
         })
-        binding.vapView.setFetchResource(object : IFetchResource{
+        binding.vapView.setFetchResource(object : IFetchResource {
             override fun fetchImage(resource: Resource, result: (Bitmap?) -> Unit) {
-                if (resource.tag.isNotEmpty()){
+                if (resource.tag.isNotEmpty()) {
                     val options = BitmapFactory.Options()
                     options.inScaled = false
                     result(BitmapFactory.decodeResource(resources, R.mipmap.head, options))
-                }else{
+                } else {
                     result.invoke(null)
                 }
                 Log.d("VAP", "fetchImage: ${resource.tag}  ${Thread.currentThread()}")
@@ -89,19 +140,23 @@ class AnimActivity : BindingActivity<ActivityAnimBinding>() {
     }
 
     private fun playVap() {
-//        binding.vapView.startPlay(assetManager = assets, "vapx.mp4")
+        val url =
+            "http://smvuqx8z8.hn-bkt.clouddn.com/devvapx.mp4?e=1731490855&token=7pyxNuVMvpNtJZyxNAHwKMuonQcvOAsEC3pwT_Y8:bYWi58FUuEN3qOXfTlKkU3ADOhw="
+        download(url) {
+            binding.vapView.startPlay(it)
+        }
+    }
 
-
-        val url = "http://smvuqx8z8.hn-bkt.clouddn.com/devvapx.mp4?e=1731490855&token=7pyxNuVMvpNtJZyxNAHwKMuonQcvOAsEC3pwT_Y8:bYWi58FUuEN3qOXfTlKkU3ADOhw="
+    private fun download(url: String, onSuccess: (file: File) -> Unit) {
         GlideApp.with(this).asFile()
-            .listener(object : RequestListener<File>{
+            .listener(object : RequestListener<File> {
                 override fun onLoadFailed(
                     p0: GlideException?,
                     p1: Any?,
                     p2: Target<File>,
                     p3: Boolean
                 ): Boolean {
-                    Log.d("Glide", "onLoadFailed")
+                    Log.d("Glide", "onLoadFailed ${Thread.currentThread()}")
                     return false
                 }
 
@@ -112,12 +167,17 @@ class AnimActivity : BindingActivity<ActivityAnimBinding>() {
                     p3: DataSource,
                     p4: Boolean
                 ): Boolean {
-                    Log.d("Glide", "onResourceReady:${file.path}")
-                    binding.vapView.startPlay(file)
+                    Log.d("Glide", "onResourceReady:${file.path} ${Thread.currentThread()}")
+                    runOnUiThread { onSuccess(file) }
                     return false
                 }
             })
             .load(url)
             .submit()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.pagView.removeListener(pagListener)
     }
 }
