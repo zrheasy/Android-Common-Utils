@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
@@ -13,6 +14,11 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.opensource.svgaplayer.SVGACallback
+import com.opensource.svgaplayer.SVGADrawable
+import com.opensource.svgaplayer.SVGAImageView
+import com.opensource.svgaplayer.SVGAParser
+import com.opensource.svgaplayer.SVGAVideoEntity
 import com.tencent.qgame.animplayer.AnimConfig
 import com.tencent.qgame.animplayer.inter.IAnimListener
 import com.tencent.qgame.animplayer.inter.IFetchResource
@@ -26,6 +32,7 @@ import com.zrh.android.common.utils.R
 import org.libpag.PAGImageView
 import org.libpag.PAGImageView.PAGImageViewListener
 import java.io.File
+import java.io.FileInputStream
 
 class AnimActivity : BindingActivity<ActivityAnimBinding>() {
 
@@ -36,25 +43,25 @@ class AnimActivity : BindingActivity<ActivityAnimBinding>() {
     )
     private val pagListener = object : PAGImageViewListener {
         override fun onAnimationStart(view: PAGImageView?) {
-            Log.d("PAG", "onAnimationStart ${Thread.currentThread()}")
+            Log.d("PAG", "onAnimationStart ${Thread.currentThread().name}")
         }
 
         override fun onAnimationEnd(view: PAGImageView?) {
-            Log.d("PAG", "onAnimationEnd ${Thread.currentThread()}")
+            Log.d("PAG", "onAnimationEnd ${Thread.currentThread().name}")
             runOnUiThread { view?.isVisible = false }
         }
 
         override fun onAnimationCancel(view: PAGImageView?) {
-            Log.d("PAG", "onAnimationCancel ${Thread.currentThread()}")
+            Log.d("PAG", "onAnimationCancel ${Thread.currentThread().name}")
             runOnUiThread { view?.isVisible = false }
         }
 
         override fun onAnimationRepeat(view: PAGImageView?) {
-            Log.d("PAG", "onAnimationRepeat ${Thread.currentThread()}")
+            Log.d("PAG", "onAnimationRepeat ${Thread.currentThread().name}")
         }
 
         override fun onAnimationUpdate(view: PAGImageView?) {
-            Log.d("PAG", "onAnimationUpdate ${Thread.currentThread()}")
+            Log.d("PAG", "onAnimationUpdate ${Thread.currentThread().name}")
         }
     }
 
@@ -63,6 +70,7 @@ class AnimActivity : BindingActivity<ActivityAnimBinding>() {
 
         initVapView()
         initPagView()
+        initSvgaView()
 
         binding.btnVap.onClick {
             playVap()
@@ -72,6 +80,52 @@ class AnimActivity : BindingActivity<ActivityAnimBinding>() {
             playPag()
         }
 
+        binding.btnSvga.onClick {
+            playSvga()
+        }
+
+    }
+
+    private fun playSvga() {
+        val url = "https://img.sugartimeapp.com/gifts/manager-a0c9bbee-0a21-499f-a833-f0c136834969.svga"
+        download(url){
+            SVGAParser.shareParser().decodeFromInputStream(FileInputStream(it), url, callback = object : SVGAParser.ParseCompletion{
+                override fun onComplete(videoItem: SVGAVideoEntity) {
+                    binding.svgaView.setVideoItem(videoItem)
+                    binding.svgaView.startAnimation()
+                }
+
+                override fun onError() {
+                    Log.d("SVGA", "onFailed ${Thread.currentThread().name}")
+                }
+            }, closeInputStream = true)
+        }
+    }
+
+    private fun initSvgaView() {
+        SVGAParser.shareParser().init(this)
+        binding.svgaView.clearsAfterDetached = true
+        binding.svgaView.loops = 1
+        binding.svgaView.fillMode = SVGAImageView.FillMode.Clear
+        binding.svgaView.scaleType = ImageView.ScaleType.CENTER_CROP
+        binding.svgaView.callback = object : SVGACallback{
+            override fun onFinished() {
+                Log.d("SVGA", "onFinished ${Thread.currentThread().name}")
+            }
+
+            override fun onPause() {
+                Log.d("SVGA", "onPause ${Thread.currentThread().name}")
+            }
+
+            override fun onRepeat() {
+
+            }
+
+            override fun onStep(frame: Int, percentage: Double) {
+
+            }
+
+        }
     }
 
     private fun playPag() {
@@ -94,15 +148,15 @@ class AnimActivity : BindingActivity<ActivityAnimBinding>() {
         // 回调在VAP子线程中
         binding.vapView.setAnimListener(object : IAnimListener {
             override fun onFailed(errorType: Int, errorMsg: String?) {
-                Log.d("VAP", "onFailed: $errorType $errorMsg ${Thread.currentThread()}")
+                Log.d("VAP", "onFailed: $errorType $errorMsg ${Thread.currentThread().name}")
             }
 
             override fun onVideoComplete() {
-                Log.d("VAP", "onVideoComplete ${Thread.currentThread()}")
+                Log.d("VAP", "onVideoComplete ${Thread.currentThread().name}")
             }
 
             override fun onVideoDestroy() {
-                Log.d("VAP", "onVideoDestroy ${Thread.currentThread()}")
+                Log.d("VAP", "onVideoDestroy ${Thread.currentThread().name}")
             }
 
             override fun onVideoRender(frameIndex: Int, config: AnimConfig?) {
@@ -110,7 +164,7 @@ class AnimActivity : BindingActivity<ActivityAnimBinding>() {
             }
 
             override fun onVideoStart() {
-                Log.d("VAP", "onVideoStart  ${Thread.currentThread()}")
+                Log.d("VAP", "onVideoStart  ${Thread.currentThread().name}")
             }
 
         })
@@ -123,12 +177,12 @@ class AnimActivity : BindingActivity<ActivityAnimBinding>() {
                 } else {
                     result.invoke(null)
                 }
-                Log.d("VAP", "fetchImage: ${resource.tag}  ${Thread.currentThread()}")
+                Log.d("VAP", "fetchImage: ${resource.tag}  ${Thread.currentThread().name}")
             }
 
             override fun fetchText(resource: Resource, result: (String?) -> Unit) {
                 result.invoke("恭喜King成功升级！")
-                Log.d("VAP", "fetchText: ${resource.tag}  ${Thread.currentThread()}")
+                Log.d("VAP", "fetchText: ${resource.tag}  ${Thread.currentThread().name}")
             }
 
             override fun releaseResource(resources: List<Resource>) {
@@ -156,7 +210,7 @@ class AnimActivity : BindingActivity<ActivityAnimBinding>() {
                     p2: Target<File>,
                     p3: Boolean
                 ): Boolean {
-                    Log.d("Glide", "onLoadFailed ${Thread.currentThread()}")
+                    Log.d("Glide", "onLoadFailed ${Thread.currentThread().name}")
                     return false
                 }
 
@@ -167,7 +221,7 @@ class AnimActivity : BindingActivity<ActivityAnimBinding>() {
                     p3: DataSource,
                     p4: Boolean
                 ): Boolean {
-                    Log.d("Glide", "onResourceReady:${file.path} ${Thread.currentThread()}")
+                    Log.d("Glide", "onResourceReady:${file.path} ${Thread.currentThread().name}")
                     runOnUiThread { onSuccess(file) }
                     return false
                 }

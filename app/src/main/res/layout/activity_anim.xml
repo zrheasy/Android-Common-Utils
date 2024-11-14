@@ -40,6 +40,11 @@
             android:id="@+id/pagView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+
+        <com.opensource.svgaplayer.SVGAImageView
+            android:id="@+id/svgaView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </FrameLayout>
 
 
