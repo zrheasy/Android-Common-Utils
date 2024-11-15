@@ -28,6 +28,14 @@ class AnimationView(context: Context, attrs: AttributeSet?) :
     init {
         val typedArray =
             context.theme.obtainStyledAttributes(attrs, R.styleable.AnimationView, 0, 0)
+
+        val scaleType = typedArray.getInt(R.styleable.AnimationView_scaleType, 0)
+        when (scaleType) {
+            0 -> mScaleType = ImageView.ScaleType.CENTER_CROP
+            1 -> mScaleType = ImageView.ScaleType.CENTER
+            2 -> mScaleType = ImageView.ScaleType.FIT_XY
+        }
+
         mLoops = typedArray.getInt(R.styleable.AnimationView_loopCount, 1)
         mClearsAfterDetached =
             typedArray.getBoolean(R.styleable.AnimationView_clearsAfterDetached, false)

@@ -33,9 +33,11 @@
             android:text="GIF"/>
     </LinearLayout>
 
-    <com.zrh.android.common.anim.AnimationQueueView
+    <com.zrh.android.common.anim.AnimationView
         android:id="@+id/animView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        app:scaleType="CENTER_CROP"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

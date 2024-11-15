@@ -10,5 +10,10 @@
         </attr>
         <attr name="loopCount" format="integer" />
         <attr name="clearsAfterDetached" format="boolean" />
+        <attr name="scaleType" format="enum">
+            <enum name="CENTER_CROP" value="0" />
+            <enum name="CENTER" value="1" />
+            <enum name="FIT_XY" value="2" />
+        </attr>
     </declare-styleable>
 </resources>
