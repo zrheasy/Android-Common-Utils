@@ -28,8 +28,12 @@ class VapComponent : AnimationComponent(), IAnimListener {
         }
     }
 
-    override fun start(resource: AnimResource) {
-        val vapView = mVapView ?: return
+    override fun onStart(resource: AnimResource) {
+        if (mVapView == null) {
+            setRunning(false)
+            return
+        }
+        val vapView = mVapView!!
         vapView.setLoop(mLoops)
         when (mScaleType) {
             ImageView.ScaleType.CENTER_CROP -> vapView.setScaleType(ScaleType.CENTER_CROP)
@@ -50,9 +54,9 @@ class VapComponent : AnimationComponent(), IAnimListener {
                         vapView.context,
                         image.value,
                         onError = { _, _ ->
-                            mHandler.post { result.invoke(null) }
+                            runOnUiThread { result.invoke(null) }
                         }) {
-                        mHandler.post { result.invoke(it) }
+                        runOnUiThread { result.invoke(it) }
                     }
                 }
             }
@@ -72,36 +76,39 @@ class VapComponent : AnimationComponent(), IAnimListener {
 
         })
 
-        // 资源相同并且已在播放则返回
-        if (mResource == resource && isRunning){
-            return
-        }
-
-        isRunning = true
-        AnimationDownloader.download(vapView.context, resource.resourceUrl, onError = { code, msg ->
-            mHandler.post {
-                isRunning = false
-                mCallback?.onError(code, msg)
-            }
-        }) {
-            mHandler.post { vapView.startPlay(it) }
+        AnimationDownloader.download(
+            vapView.context,
+            resource.resourceUrl,
+            onError = this::notifyError
+        ) {
+            runOnUiThread { vapView.startPlay(it) }
         }
     }
 
-    override fun stop() {
-        isRunning = false
+    override fun onRestart(resource: AnimResource) {
+        if (mVapView == null) {
+            setRunning(false)
+            return
+        }
+        val vapView = mVapView!!
+        AnimationDownloader.download(
+            vapView.context,
+            resource.resourceUrl,
+            onError = this::notifyError
+        ) {
+            runOnUiThread { vapView.startPlay(it) }
+        }
+    }
+
+    override fun onStop() {
         mVapView?.stopPlay()
     }
 
-    override fun destroy() {
-        isRunning = false
-
+    override fun onDestroy() {
         mVapView?.setAnimListener(null)
         mVapView?.stopPlay()
         (mVapView?.parent as? ViewGroup)?.removeView(mVapView!!)
         mVapView = null
-
-        mHandler.removeCallbacksAndMessages(null)
     }
 
     override fun getType(): String {
@@ -109,24 +116,15 @@ class VapComponent : AnimationComponent(), IAnimListener {
     }
 
     override fun onFailed(errorType: Int, errorMsg: String?) {
-        mHandler.post {
-            isRunning = false
-            mCallback?.onError(errorType, errorMsg ?: "play error")
-        }
+        notifyError(errorType, errorMsg ?: "vap play error")
     }
 
     override fun onVideoComplete() {
-        mHandler.post {
-            isRunning = false
-            mCallback?.onComplete()
-        }
+        notifyComplete()
     }
 
     override fun onVideoDestroy() {
-        mHandler.post {
-            isRunning = false
-            mCallback?.onComplete()
-        }
+        notifyComplete()
     }
 
     override fun onVideoRender(frameIndex: Int, config: AnimConfig?) {

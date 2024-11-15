@@ -37,8 +37,13 @@ class SVGAComponent : AnimationComponent() , SVGACallback{
         }
     }
 
-    override fun start(resource: AnimResource) {
-        val svgaView = mSvgaImageView ?: return
+    override fun onStart(resource: AnimResource) {
+        if (mSvgaImageView == null){
+            setRunning(false)
+            return
+        }
+
+        val svgaView = mSvgaImageView!!
 
         // 设置svga播放参数
         svgaView.loops = this@SVGAComponent.mLoops
@@ -47,29 +52,25 @@ class SVGAComponent : AnimationComponent() , SVGACallback{
 
         // 监听回调
         svgaView.callback = this
-
-        if (this.mResource == resource) {
-            if (!isRunning) {
-                svgaView.startAnimation()
-                isRunning = true
-            }
-        } else {
-            isRunning = true
-            AnimationDownloader.download(
-                svgaView.context,
-                resource.resourceUrl,
-                onError = { code, msg ->
-                    mHandler.post {
-                        isRunning = false
-                        mCallback?.onError(code, msg)
-                    }
-                }
-            ) { file ->
-                mHandler.post {
-                    internalStart(svgaView, file, resource.elements)
-                }
+        AnimationDownloader.download(
+            svgaView.context,
+            resource.resourceUrl,
+            onError = this::notifyError
+        ) { file ->
+            runOnUiThread {
+                internalStart(svgaView, file, resource.elements)
             }
         }
+    }
+
+    override fun onRestart(resource: AnimResource) {
+        if (mSvgaImageView == null){
+            setRunning(false)
+            return
+        }
+
+        val svgaView = mSvgaImageView!!
+        svgaView.startAnimation()
     }
 
     private fun internalStart(svgaView: SVGAImageView, file: File, elements: List<AnimElement>?) {
@@ -79,7 +80,7 @@ class SVGAComponent : AnimationComponent() , SVGACallback{
             file.path,
             callback = object : SVGAParser.ParseCompletion {
                 override fun onComplete(videoItem: SVGAVideoEntity) {
-                    mHandler.post {
+                    runOnUiThread {
                         val dynamicEntity = SVGADynamicEntity()
                         elements?.forEach {
                             when (it.type) {
@@ -97,31 +98,23 @@ class SVGAComponent : AnimationComponent() , SVGACallback{
                 }
 
                 override fun onError() {
-                    mHandler.post {
-                        isRunning = false
-                        mCallback?.onError(-2, "svga play error")
-                    }
+                    notifyError(-2, "svga play error")
                 }
             },
             closeInputStream = true
         )
     }
 
-    override fun stop() {
-        isRunning = false
+    override fun onStop() {
         mSvgaImageView?.stopAnimation()
     }
 
-    override fun destroy() {
-        isRunning = false
-
+    override fun onDestroy() {
         mSvgaImageView?.callback = null
         mSvgaImageView?.stopAnimation()
         mSvgaImageView?.clear()
         (mSvgaImageView?.parent as? ViewGroup)?.removeView(mSvgaImageView!!)
         mSvgaImageView = null
-
-        mHandler.removeCallbacksAndMessages(null)
     }
 
     override fun getType(): String {
@@ -129,10 +122,7 @@ class SVGAComponent : AnimationComponent() , SVGACallback{
     }
 
     override fun onFinished() {
-        mHandler.post {
-            isRunning = false
-            mCallback?.onComplete()
-        }
+        notifyComplete()
     }
 
     override fun onPause() {

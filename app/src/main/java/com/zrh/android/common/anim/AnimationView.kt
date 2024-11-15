@@ -94,6 +94,8 @@ class AnimationView(context: Context, attrs: AttributeSet?) :
         return component
     }
 
+    fun isRunning(): Boolean = mComponent?.isRunning() ?: false
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         assetsResource?.let { start(it) }
@@ -101,10 +103,14 @@ class AnimationView(context: Context, attrs: AttributeSet?) :
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        if (mClearsAfterDetached) clear()
+        if (mClearsAfterDetached) destroy()
     }
 
-    fun clear() {
+    fun stop() {
+        mComponent?.stop()
+    }
+
+    fun destroy() {
         mComponent?.destroy()
         mComponent = null
 

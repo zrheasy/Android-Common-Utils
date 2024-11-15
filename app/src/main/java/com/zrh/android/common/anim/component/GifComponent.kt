@@ -13,8 +13,7 @@ class GifComponent : AnimationComponent() {
     private var mImageView: ImageView? = null
     private val animCallback = object : AnimationCallback() {
         override fun onAnimationEnd(drawable: Drawable?) {
-            mCallback?.onComplete()
-            isRunning = false
+            notifyComplete()
         }
     }
 
@@ -30,45 +29,43 @@ class GifComponent : AnimationComponent() {
         }
     }
 
-    override fun start(resource: AnimResource) {
-        val imageView = mImageView ?: return
+    override fun onStart(resource: AnimResource) {
+        if (mImageView == null){
+            setRunning(false)
+            return
+        }
+        val imageView = mImageView!!
         imageView.scaleType = mScaleType
 
-        if (this.mResource == resource) {
-            if (!isRunning) {
-                val drawable = mImageView?.drawable as? GifDrawable
-                drawable?.start()
-                isRunning = true
-            }
-        } else {
-            isRunning = true
-            AnimationDownloader.downloadGif(
-                imageView.context,
-                resource.resourceUrl,
-                onError = { code, msg ->
-                    mHandler.post {
-                        isRunning = false
-                        mCallback?.onError(code, msg)
-                    }
-                }) {
-                mHandler.post {
-                    imageView.setImageDrawable(it)
-                    it.setLoopCount(mLoops)
-                    it.registerAnimationCallback(animCallback)
-                    it.start()
-                }
+        AnimationDownloader.downloadGif(
+            imageView.context,
+            resource.resourceUrl,
+            onError = this::notifyError
+        ) {
+            runOnUiThread {
+                imageView.setImageDrawable(it)
+                it.setLoopCount(mLoops)
+                it.registerAnimationCallback(animCallback)
+                it.start()
             }
         }
     }
 
-    override fun stop() {
-        isRunning = false
+    override fun onRestart(resource: AnimResource) {
+        val drawable = mImageView?.drawable as? GifDrawable
+        if (drawable == null){
+            setRunning(false)
+            return
+        }
+        drawable.start()
+    }
+
+    override fun onStop() {
         val drawable = mImageView?.drawable as? GifDrawable
         drawable?.stop()
     }
 
-    override fun destroy() {
-        isRunning = false
+    override fun onDestroy() {
         val drawable = mImageView?.drawable as? GifDrawable
         drawable?.let {
             it.unregisterAnimationCallback(animCallback)
@@ -77,8 +74,6 @@ class GifComponent : AnimationComponent() {
         (mImageView?.parent as? ViewGroup)?.removeView(mImageView!!)
         mImageView?.setImageDrawable(null)
         mImageView = null
-
-        mHandler.removeCallbacksAndMessages(null)
     }
 
     override fun getType(): String {

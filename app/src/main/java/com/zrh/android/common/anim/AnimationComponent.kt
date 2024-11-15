@@ -2,18 +2,26 @@ package com.zrh.android.common.anim
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.ImageView
 
 abstract class AnimationComponent {
 
-    protected val mHandler = Handler(Looper.getMainLooper())
+    private val mHandler = Handler(Looper.getMainLooper())
+
+    private var isRunning: Boolean = false
+    private var mCallback: AnimationCallback? = null
 
     protected var mResource: AnimResource? = null
-    protected var isRunning: Boolean = false
-    protected var mCallback: AnimationCallback? = null
     protected var mLoops: Int = 1
     protected var mScaleType: ImageView.ScaleType = ImageView.ScaleType.CENTER_CROP
+
+    fun isRunning(): Boolean = isRunning
+
+    fun setRunning(running: Boolean) {
+        isRunning = running
+    }
 
     fun setLoops(loops: Int) {
         mLoops = loops
@@ -27,13 +35,61 @@ abstract class AnimationComponent {
         mCallback = callback
     }
 
-    abstract fun attachToParent(parent:ViewGroup)
+    fun notifyError(code: Int, msg: String) {
+        mHandler.post {
+            Log.d("AnimationComponent", "Error: $code $msg $mResource")
+            isRunning = false
+            mCallback?.onError(code, msg)
+        }
+    }
 
-    abstract fun start(resource:AnimResource)
+    fun notifyComplete(action: () -> Unit = {}) {
+        mHandler.post {
+            Log.d("AnimationComponent", "onComplete: $mResource")
+            isRunning = false
+            mCallback?.onComplete()
+            action()
+        }
+    }
 
-    abstract fun stop()
+    fun runOnUiThread(action: () -> Unit) {
+        mHandler.post { action() }
+    }
 
-    abstract fun destroy()
+    abstract fun attachToParent(parent: ViewGroup)
 
-    abstract fun getType():String
+    fun start(resource: AnimResource) {
+        if (this.mResource == resource) {
+            if (!isRunning) {
+                isRunning = true
+                onRestart(resource)
+            }
+        } else {
+            mResource = resource
+            isRunning = true
+            onStart(resource)
+        }
+    }
+
+    abstract fun onRestart(resource: AnimResource)
+
+    abstract fun onStart(resource: AnimResource)
+
+    fun stop() {
+        isRunning = false
+        onStop()
+    }
+
+    abstract fun onStop()
+
+    fun destroy() {
+        isRunning = false
+        mHandler.removeCallbacksAndMessages(null)
+        mCallback = null
+        onDestroy()
+    }
+
+    abstract fun onDestroy()
+
+    abstract fun getType(): String
 }

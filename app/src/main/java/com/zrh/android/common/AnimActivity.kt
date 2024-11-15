@@ -2,10 +2,8 @@ package com.zrh.android.common
 
 import android.os.Bundle
 import com.zrh.android.common.anim.AnimResource
-import com.zrh.android.common.anim.AnimationCallback
 import com.zrh.android.common.utils.databinding.ActivityAnimBinding
 import com.zrh.android.common.utils.onClick
-import com.zrh.android.common.utils.toast
 import com.zrh.android.common.widgets.BindingActivity
 
 class AnimActivity : BindingActivity<ActivityAnimBinding>() {
@@ -36,37 +34,29 @@ class AnimActivity : BindingActivity<ActivityAnimBinding>() {
     }
 
     private fun initAnimView() {
-        binding.animView.setCallback(object : AnimationCallback{
-            override fun onComplete() {
-                toast("play complete!")
-            }
 
-            override fun onError(code: Int, message: String) {
-                toast("Error: $code $message")
-            }
-        })
     }
 
     private fun playSvga() {
         val url = "https://img.sugartimeapp.com/gifts/manager-a0c9bbee-0a21-499f-a833-f0c136834969.svga"
-        binding.animView.start(AnimResource(AnimResource.TYPE_SVGA, url))
+        binding.animView.enqueue(AnimResource(AnimResource.TYPE_SVGA, url))
     }
 
 
     private fun playPag() {
         val url = pagResources[pagIndex++ % pagResources.size]
-        binding.animView.start(AnimResource(AnimResource.TYPE_PAG, url))
+        binding.animView.enqueue(AnimResource(AnimResource.TYPE_PAG, url))
     }
 
     private fun playVap() {
         val url =
             "http://smvuqx8z8.hn-bkt.clouddn.com/devvapx.mp4?e=1731490855&token=7pyxNuVMvpNtJZyxNAHwKMuonQcvOAsEC3pwT_Y8:bYWi58FUuEN3qOXfTlKkU3ADOhw="
-        binding.animView.start(AnimResource(AnimResource.TYPE_VAP, url))
+        binding.animView.enqueue(AnimResource(AnimResource.TYPE_VAP, url))
     }
 
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.animView.clear()
+        binding.animView.destroy()
     }
 }

@@ -24,25 +24,18 @@ class PagComponent : AnimationComponent(), PAGImageView.PAGImageViewListener {
         }
     }
 
-    override fun start(resource: AnimResource) {
-        val pagView = mPagView ?: return
+    override fun onStart(resource: AnimResource) {
+        if (mPagView == null){
+            setRunning(false)
+            return
+        }
+        val pagView = mPagView!!
         pagView.setRepeatCount(mLoops)
         pagView.setScaleMode(PAGScaleMode.LetterBox)
         pagView.addListener(this)
 
-        // 资源相同并且已在播放则返回
-        if (mResource == resource && isRunning){
-            return
-        }
-
-        isRunning = true
-        AnimationDownloader.download(pagView.context, resource.resourceUrl, onError = { code, msg ->
-            mHandler.post {
-                isRunning = false
-                mCallback?.onError(code, msg)
-            }
-        }) {
-            mHandler.post {
+        AnimationDownloader.download(pagView.context, resource.resourceUrl, onError = this::notifyError) {
+            runOnUiThread {
                 pagView.setPath(it.path)
                 pagView.play()
                 pagView.isVisible = true
@@ -50,19 +43,30 @@ class PagComponent : AnimationComponent(), PAGImageView.PAGImageViewListener {
         }
     }
 
-    override fun stop() {
-        isRunning = false
+    override fun onRestart(resource: AnimResource) {
+        if (mPagView == null){
+            setRunning(false)
+            return
+        }
+        val pagView = mPagView!!
+        AnimationDownloader.download(pagView.context, resource.resourceUrl, onError = this::notifyError) {
+            runOnUiThread {
+                pagView.setPath(it.path)
+                pagView.play()
+                pagView.isVisible = true
+            }
+        }
+    }
+
+    override fun onStop() {
         mPagView?.pause()
     }
 
-    override fun destroy() {
-        isRunning = false
+    override fun onDestroy() {
         mPagView?.pause()
         mPagView?.removeListener(this)
         (mPagView?.parent as? ViewGroup)?.removeView(mPagView!!)
         mPagView = null
-
-        mHandler.removeCallbacksAndMessages(null)
     }
 
     override fun getType(): String {
@@ -73,17 +77,13 @@ class PagComponent : AnimationComponent(), PAGImageView.PAGImageViewListener {
     }
 
     override fun onAnimationEnd(p0: PAGImageView?) {
-        mHandler.post {
-            isRunning = false
-            mCallback?.onComplete()
+        notifyComplete {
             mPagView?.isVisible = false
         }
     }
 
     override fun onAnimationCancel(p0: PAGImageView?) {
-        mHandler.post {
-            isRunning = false
-            mCallback?.onComplete()
+        notifyComplete {
             mPagView?.isVisible = false
         }
     }
