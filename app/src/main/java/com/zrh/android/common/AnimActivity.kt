@@ -31,6 +31,15 @@ class AnimActivity : BindingActivity<ActivityAnimBinding>() {
             playSvga()
         }
 
+        binding.btnGif.onClick {
+            playGif()
+        }
+
+    }
+
+    private fun playGif() {
+        val url = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2N0MHY0OGY1dGh5ZDFsbWZoNXlvczRyb3hoOHMwc2pjc2pveGdiaSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/37nPfslihaoussRbcC/giphy.gif"
+        binding.animView.enqueue(AnimResource(AnimResource.TYPE_GIF, url))
     }
 
     private fun initAnimView() {

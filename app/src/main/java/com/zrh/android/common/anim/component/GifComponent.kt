@@ -1,19 +1,26 @@
 package com.zrh.android.common.anim.component
 
-import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.vectordrawable.graphics.drawable.Animatable2Compat.AnimationCallback
-import com.bumptech.glide.load.resource.gif.GifDrawable
+import androidx.core.view.isVisible
 import com.zrh.android.common.anim.AnimResource
 import com.zrh.android.common.anim.AnimationComponent
 import com.zrh.android.common.anim.AnimationDownloader
+import pl.droidsonroids.gif.AnimationListener
+import pl.droidsonroids.gif.GifDrawable
 
-class GifComponent : AnimationComponent() {
+class GifComponent : AnimationComponent(){
     private var mImageView: ImageView? = null
-    private val animCallback = object : AnimationCallback() {
-        override fun onAnimationEnd(drawable: Drawable?) {
-            notifyComplete()
+    private val animCallback = AnimationListener {
+        Log.d("GifComponent", "loopCount: $it")
+        if(mLoops <= 0) return@AnimationListener
+        if (it == mLoops - 1){
+            notifyComplete {
+                val drawable = mImageView?.drawable as? GifDrawable
+                drawable?.stop()
+                mImageView?.isVisible = false
+            }
         }
     }
 
@@ -37,16 +44,18 @@ class GifComponent : AnimationComponent() {
         val imageView = mImageView!!
         imageView.scaleType = mScaleType
 
-        AnimationDownloader.downloadGif(
+        AnimationDownloader.download(
             imageView.context,
             resource.resourceUrl,
             onError = this::notifyError
         ) {
+            val drawable = GifDrawable(it)
             runOnUiThread {
-                imageView.setImageDrawable(it)
-                it.setLoopCount(mLoops)
-                it.registerAnimationCallback(animCallback)
-                it.start()
+                imageView.setImageDrawable(drawable)
+                drawable.loopCount = mLoops
+                drawable.addAnimationListener(animCallback)
+                drawable.start()
+                mImageView?.isVisible = true
             }
         }
     }
@@ -57,7 +66,8 @@ class GifComponent : AnimationComponent() {
             setRunning(false)
             return
         }
-        drawable.start()
+        drawable.reset()
+        mImageView?.isVisible = true
     }
 
     override fun onStop() {
@@ -68,7 +78,7 @@ class GifComponent : AnimationComponent() {
     override fun onDestroy() {
         val drawable = mImageView?.drawable as? GifDrawable
         drawable?.let {
-            it.unregisterAnimationCallback(animCallback)
+            it.removeAnimationListener(animCallback)
             it.stop()
         }
         (mImageView?.parent as? ViewGroup)?.removeView(mImageView!!)

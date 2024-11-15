@@ -26,6 +26,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="SVGA"/>
+        <Button
+            android:id="@+id/btnGif"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="GIF"/>
     </LinearLayout>
 
     <com.zrh.android.common.anim.AnimationQueueView

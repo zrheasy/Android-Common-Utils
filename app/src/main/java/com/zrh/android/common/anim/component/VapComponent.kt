@@ -1,6 +1,7 @@
 package com.zrh.android.common.anim.component
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.tencent.qgame.animplayer.AnimConfig
@@ -50,13 +51,13 @@ class VapComponent : AnimationComponent(), IAnimListener {
                 if (image == null) {
                     result.invoke(null)
                 } else {
-                    AnimationDownloader.downloadBitmap(
+                    AnimationDownloader.download(
                         vapView.context,
                         image.value,
-                        onError = { _, _ ->
-                            runOnUiThread { result.invoke(null) }
-                        }) {
-                        runOnUiThread { result.invoke(it) }
+                        onError = { _, _ -> result.invoke(null) }) {
+                        val options = BitmapFactory.Options()
+                        options.inScaled = false
+                        result.invoke(BitmapFactory.decodeFile(it.path, options))
                     }
                 }
             }

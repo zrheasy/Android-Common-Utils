@@ -27,3 +27,7 @@
 # SVGA
 -keep class com.squareup.wire.** { *; }
 -keep class com.opensource.svgaplayer.proto.** { *; }
+
+# gif
+-keep public class pl.droidsonroids.gif.GifIOException{<init>(int);}
+-keep class pl.droidsonroids.gif.GifInfoHandle{<init>(long,int,int,int);}

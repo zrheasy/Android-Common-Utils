@@ -6,12 +6,13 @@ plugins {
 
 android {
     namespace 'com.zrh.android.common.utils'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.zrh.android.common.utils"
         minSdk 21
-        targetSdk 33
+        //noinspection EditedTargetSdkVersion
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -58,6 +59,7 @@ dependencies {
     implementation "io.github.tencent:vap:2.0.28"
     implementation 'com.tencent.tav:libpag:4.4.12'
     implementation 'com.github.yyued:SVGAPlayer-Android:2.6.1'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.29'
 
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     implementation "com.github.bumptech.glide:okhttp3-integration:4.16.0"

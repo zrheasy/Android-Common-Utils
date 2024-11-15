@@ -2,6 +2,7 @@ package com.zrh.android.common.anim
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.widget.FrameLayout
 import java.util.LinkedList
 
@@ -25,10 +26,16 @@ class AnimationQueueView(context: Context, attrs: AttributeSet?) : FrameLayout(c
     }
 
     fun enqueue(resource: AnimResource) {
-        mQueue.push(resource)
+        mQueue.offer(resource)
+        Log.d("AnimationQueueView", "enqueue: $resource")
         if (!mAnimView.isRunning()) {
             play()
         }
+    }
+
+    fun reset(){
+        mAnimView.stop()
+        mQueue.clear()
     }
 
     private fun play() {
