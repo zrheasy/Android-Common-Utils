@@ -1,14 +1,9 @@
-package com.zrh.android.common.anim
+package com.anim.core
 
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import android.widget.ImageView
-import com.zrh.android.common.anim.component.GifComponent
-import com.zrh.android.common.anim.component.PagComponent
-import com.zrh.android.common.anim.component.SVGAComponent
-import com.zrh.android.common.anim.component.VapComponent
-import com.zrh.android.common.utils.R
 
 /**
  * 一个聚合的动画组件，包含svga、vap、pag三种组件
@@ -44,11 +39,11 @@ class AnimationView(context: Context, attrs: AttributeSet?) :
 
         if (source != null && type != -1) {
             val resType = when (type) {
-                0 -> AnimResource.TYPE_GIF
-                1 -> AnimResource.TYPE_SVGA
-                2 -> AnimResource.TYPE_PAG
-                3 -> AnimResource.TYPE_VAP
-                else -> AnimResource.TYPE_NONE
+                0 -> AnimationType.GIF
+                1 -> AnimationType.SVGA
+                2 -> AnimationType.PAG
+                3 -> AnimationType.VAP
+                else -> AnimationType.NONE
             }
             assetsResource = AnimResource(resType, "file:///android_asset/$source")
         }
@@ -86,14 +81,8 @@ class AnimationView(context: Context, attrs: AttributeSet?) :
         mComponent?.start(resource)
     }
 
-    private fun onCreateComponent(type: String): AnimationComponent? {
-        val component = when (type) {
-            AnimResource.TYPE_SVGA -> SVGAComponent()
-            AnimResource.TYPE_GIF -> GifComponent()
-            AnimResource.TYPE_VAP -> VapComponent()
-            AnimResource.TYPE_PAG -> PagComponent()
-            else -> null
-        }
+    private fun onCreateComponent(type: AnimationType): AnimationComponent? {
+        val component = AnimationConfig.createComponent(type)
         component?.let {
             it.setLoops(mLoops)
             it.setScaleType(mScaleType)

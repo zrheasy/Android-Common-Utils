@@ -1,12 +1,12 @@
-package com.zrh.android.common.anim.component
+package com.anim.gif
 
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.view.isVisible
-import com.zrh.android.common.anim.AnimResource
-import com.zrh.android.common.anim.AnimationComponent
-import com.zrh.android.common.anim.AnimationDownloader
+import com.anim.core.AnimResource
+import com.anim.core.AnimationComponent
+import com.anim.core.AnimationType
 import pl.droidsonroids.gif.AnimationListener
 import pl.droidsonroids.gif.GifDrawable
 
@@ -44,7 +44,7 @@ class GifComponent : AnimationComponent(){
         val imageView = mImageView!!
         imageView.scaleType = mScaleType
 
-        AnimationDownloader.download(
+        download(
             imageView.context,
             resource.resourceUrl,
             onError = this::notifyError
@@ -86,7 +86,7 @@ class GifComponent : AnimationComponent(){
         mImageView = null
     }
 
-    override fun getType(): String {
-        return AnimResource.TYPE_GIF
+    override fun getType(): AnimationType {
+        return AnimationType.GIF
     }
 }

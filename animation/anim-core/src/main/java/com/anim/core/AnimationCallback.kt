@@ -1,4 +1,4 @@
-package com.zrh.android.common.anim
+package com.anim.core
 
 interface AnimationCallback {
     fun onComplete()

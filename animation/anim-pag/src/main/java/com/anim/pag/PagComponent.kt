@@ -1,11 +1,11 @@
-package com.zrh.android.common.anim.component
+package com.anim.pag
 
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.core.view.isVisible
-import com.zrh.android.common.anim.AnimResource
-import com.zrh.android.common.anim.AnimationComponent
-import com.zrh.android.common.anim.AnimationDownloader
+import com.anim.core.AnimResource
+import com.anim.core.AnimationComponent
+import com.anim.core.AnimationDownloader
+import com.anim.core.AnimationType
 import org.libpag.PAGImageView
 import org.libpag.PAGScaleMode
 
@@ -34,7 +34,7 @@ class PagComponent : AnimationComponent(), PAGImageView.PAGImageViewListener {
         pagView.setScaleMode(PAGScaleMode.LetterBox)
         pagView.addListener(this)
 
-        AnimationDownloader.download(pagView.context, resource.resourceUrl, onError = this::notifyError) {
+        download(pagView.context, resource.resourceUrl, onError = this::notifyError) {
             runOnUiThread {
                 pagView.setPath(it.path)
                 pagView.play()
@@ -49,7 +49,7 @@ class PagComponent : AnimationComponent(), PAGImageView.PAGImageViewListener {
             return
         }
         val pagView = mPagView!!
-        AnimationDownloader.download(pagView.context, resource.resourceUrl, onError = this::notifyError) {
+        download(pagView.context, resource.resourceUrl, onError = this::notifyError) {
             runOnUiThread {
                 pagView.setPath(it.path)
                 pagView.play()
@@ -69,8 +69,8 @@ class PagComponent : AnimationComponent(), PAGImageView.PAGImageViewListener {
         mPagView = null
     }
 
-    override fun getType(): String {
-        return AnimResource.TYPE_PAG
+    override fun getType(): AnimationType {
+        return AnimationType.PAG
     }
 
     override fun onAnimationStart(p0: PAGImageView?) {

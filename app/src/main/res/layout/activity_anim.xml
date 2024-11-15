@@ -33,7 +33,7 @@
             android:text="GIF"/>
     </LinearLayout>
 
-    <com.zrh.android.common.anim.AnimationView
+    <com.anim.core.AnimationView
         android:id="@+id/animView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

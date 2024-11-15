@@ -9,6 +9,12 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/animation" />
+            <option value="$PROJECT_DIR$/animation/anim-core" />
+            <option value="$PROJECT_DIR$/animation/anim-gif" />
+            <option value="$PROJECT_DIR$/animation/anim-pag" />
+            <option value="$PROJECT_DIR$/animation/anim-svga" />
+            <option value="$PROJECT_DIR$/animation/anim-vap" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/common" />
           </set>

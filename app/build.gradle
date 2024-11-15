@@ -56,10 +56,12 @@ dependencies {
     releaseImplementation "io.github.didi.dokit:dokitx-no-op:3.5.0"
     implementation 'com.android.volley:volley:1.2.0'
 
-    implementation "io.github.tencent:vap:2.0.28"
-    implementation 'com.tencent.tav:libpag:4.4.12'
-    implementation 'com.github.yyued:SVGAPlayer-Android:2.6.1'
-    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.29'
+    implementation project(':animation:anim-core')
+    implementation project(':animation:anim-svga')
+    implementation project(':animation:anim-gif')
+    implementation project(':animation:anim-vap')
+    implementation project(':animation:anim-pag')
+
 
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     implementation "com.github.bumptech.glide:okhttp3-integration:4.16.0"

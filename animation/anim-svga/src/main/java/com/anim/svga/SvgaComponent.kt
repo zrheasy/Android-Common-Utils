@@ -1,21 +1,22 @@
-package com.zrh.android.common.anim.component
+package com.anim.svga
 
 import android.graphics.Color
 import android.text.TextPaint
 import android.view.ViewGroup
+import com.anim.core.AnimElement
+import com.anim.core.AnimResource
+import com.anim.core.AnimationComponent
+import com.anim.core.AnimationType
+import com.anim.core.ElementType
 import com.opensource.svgaplayer.SVGACallback
 import com.opensource.svgaplayer.SVGADynamicEntity
 import com.opensource.svgaplayer.SVGAImageView
 import com.opensource.svgaplayer.SVGAParser
 import com.opensource.svgaplayer.SVGAVideoEntity
-import com.zrh.android.common.anim.AnimElement
-import com.zrh.android.common.anim.AnimResource
-import com.zrh.android.common.anim.AnimationComponent
-import com.zrh.android.common.anim.AnimationDownloader
 import java.io.File
 import java.io.FileInputStream
 
-class SVGAComponent : AnimationComponent() , SVGACallback{
+class SvgaComponent : AnimationComponent() , SVGACallback{
     private var mSvgaImageView: SVGAImageView? = null
     private lateinit var mPaint: TextPaint
 
@@ -46,13 +47,13 @@ class SVGAComponent : AnimationComponent() , SVGACallback{
         val svgaView = mSvgaImageView!!
 
         // 设置svga播放参数
-        svgaView.loops = this@SVGAComponent.mLoops
-        svgaView.scaleType = this@SVGAComponent.mScaleType
+        svgaView.loops = this@SvgaComponent.mLoops
+        svgaView.scaleType = this@SvgaComponent.mScaleType
         svgaView.fillMode = SVGAImageView.FillMode.Clear
 
         // 监听回调
         svgaView.callback = this
-        AnimationDownloader.download(
+        download(
             svgaView.context,
             resource.resourceUrl,
             onError = this::notifyError
@@ -84,10 +85,10 @@ class SVGAComponent : AnimationComponent() , SVGACallback{
                         val dynamicEntity = SVGADynamicEntity()
                         elements?.forEach {
                             when (it.type) {
-                                AnimResource.ELEMENT_TEXT -> {
+                                ElementType.TEXT -> {
                                     dynamicEntity.setDynamicText(it.value, mPaint, it.key)
                                 }
-                                AnimResource.ELEMENT_IMAGE -> {
+                                ElementType.IMAGE -> {
                                     dynamicEntity.setDynamicImage(it.value, it.key)
                                 }
                             }
@@ -117,8 +118,8 @@ class SVGAComponent : AnimationComponent() , SVGACallback{
         mSvgaImageView = null
     }
 
-    override fun getType(): String {
-        return AnimResource.TYPE_SVGA
+    override fun getType(): AnimationType {
+        return AnimationType.SVGA
     }
 
     override fun onFinished() {

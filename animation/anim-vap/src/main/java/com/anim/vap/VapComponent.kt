@@ -1,18 +1,19 @@
-package com.zrh.android.common.anim.component
+package com.anim.vap
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.ViewGroup
 import android.widget.ImageView
+import com.anim.core.AnimResource
+import com.anim.core.AnimationComponent
+import com.anim.core.AnimationDownloader
+import com.anim.core.AnimationType
 import com.tencent.qgame.animplayer.AnimConfig
 import com.tencent.qgame.animplayer.AnimView
 import com.tencent.qgame.animplayer.inter.IAnimListener
 import com.tencent.qgame.animplayer.inter.IFetchResource
 import com.tencent.qgame.animplayer.mix.Resource
 import com.tencent.qgame.animplayer.util.ScaleType
-import com.zrh.android.common.anim.AnimResource
-import com.zrh.android.common.anim.AnimationComponent
-import com.zrh.android.common.anim.AnimationDownloader
 
 class VapComponent : AnimationComponent(), IAnimListener {
     private var mVapView: AnimView? = null
@@ -51,7 +52,7 @@ class VapComponent : AnimationComponent(), IAnimListener {
                 if (image == null) {
                     result.invoke(null)
                 } else {
-                    AnimationDownloader.download(
+                    download(
                         vapView.context,
                         image.value,
                         onError = { _, _ -> result.invoke(null) }) {
@@ -77,7 +78,7 @@ class VapComponent : AnimationComponent(), IAnimListener {
 
         })
 
-        AnimationDownloader.download(
+        download(
             vapView.context,
             resource.resourceUrl,
             onError = this::notifyError
@@ -92,7 +93,7 @@ class VapComponent : AnimationComponent(), IAnimListener {
             return
         }
         val vapView = mVapView!!
-        AnimationDownloader.download(
+        download(
             vapView.context,
             resource.resourceUrl,
             onError = this::notifyError
@@ -112,8 +113,8 @@ class VapComponent : AnimationComponent(), IAnimListener {
         mVapView = null
     }
 
-    override fun getType(): String {
-        return AnimResource.TYPE_VAP
+    override fun getType(): AnimationType {
+        return AnimationType.VAP
     }
 
     override fun onFailed(errorType: Int, errorMsg: String?) {

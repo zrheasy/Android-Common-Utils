@@ -1,10 +1,12 @@
-package com.zrh.android.common.anim
+package com.anim.core
 
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.ImageView
+import java.io.File
 
 abstract class AnimationComponent {
 
@@ -13,7 +15,7 @@ abstract class AnimationComponent {
     private var isRunning: Boolean = false
     private var mCallback: AnimationCallback? = null
 
-    protected var mResource: AnimResource? = null
+    private var mResource: AnimResource? = null
     protected var mLoops: Int = 1
     protected var mScaleType: ImageView.ScaleType = ImageView.ScaleType.CENTER_CROP
 
@@ -91,5 +93,14 @@ abstract class AnimationComponent {
 
     abstract fun onDestroy()
 
-    abstract fun getType(): String
+    abstract fun getType(): AnimationType
+
+    protected fun download(
+        context: Context,
+        url: String,
+        onError: ((code: Int, msg: String) -> Unit)? = null,
+        onSuccess: (file: File) -> Unit
+    ){
+        AnimationConfig.download(context, url, onError, onSuccess)
+    }
 }

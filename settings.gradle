@@ -21,3 +21,8 @@ dependencyResolutionManagement {
 rootProject.name = "Android-Common-Utils"
 include ':app'
 include ':common'
+include ':animation:anim-core'
+include ':animation:anim-svga'
+include ':animation:anim-gif'
+include ':animation:anim-vap'
+include ':animation:anim-pag'
