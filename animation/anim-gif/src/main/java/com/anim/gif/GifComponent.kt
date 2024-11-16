@@ -9,6 +9,7 @@ import com.anim.core.AnimationComponent
 import com.anim.core.AnimationType
 import pl.droidsonroids.gif.AnimationListener
 import pl.droidsonroids.gif.GifDrawable
+import java.io.File
 
 class GifComponent : AnimationComponent(){
     private var mImageView: ImageView? = null
@@ -44,20 +45,7 @@ class GifComponent : AnimationComponent(){
         val imageView = mImageView!!
         imageView.scaleType = mScaleType
 
-        download(
-            imageView.context,
-            resource.resourceUrl,
-            onError = this::notifyError
-        ) {
-            val drawable = GifDrawable(it)
-            runOnUiThread {
-                imageView.setImageDrawable(drawable)
-                drawable.loopCount = mLoops
-                drawable.addAnimationListener(animCallback)
-                drawable.start()
-                mImageView?.isVisible = true
-            }
-        }
+        download(imageView.context, resource.resourceUrl)
     }
 
     override fun onRestart(resource: AnimResource) {
@@ -68,6 +56,21 @@ class GifComponent : AnimationComponent(){
         }
         drawable.reset()
         mImageView?.isVisible = true
+    }
+
+    override fun onDownloadSuccess(file: File) {
+        val drawable = GifDrawable(file)
+        runOnUiThread {
+            if (mImageView == null){
+                setRunning(false)
+                return@runOnUiThread
+            }
+            mImageView?.setImageDrawable(drawable)
+            drawable.loopCount = mLoops
+            drawable.addAnimationListener(animCallback)
+            drawable.start()
+            mImageView?.isVisible = true
+        }
     }
 
     override fun onStop() {

@@ -62,8 +62,8 @@ class AnimActivity : BindingActivity<ActivityAnimBinding>() {
     }
 
     private fun playVap() {
-        val url =
-            "http://smvuqx8z8.hn-bkt.clouddn.com/devvapx.mp4?e=1731490855&token=7pyxNuVMvpNtJZyxNAHwKMuonQcvOAsEC3pwT_Y8:bYWi58FUuEN3qOXfTlKkU3ADOhw="
+//        val url = "http://smvuqx8z8.hn-bkt.clouddn.com/devvapx.mp4?e=1731490855&token=7pyxNuVMvpNtJZyxNAHwKMuonQcvOAsEC3pwT_Y8:bYWi58FUuEN3qOXfTlKkU3ADOhw="
+        val url = "file:///android_asset/vapx.mp4"
         mAnimQueue.enqueue(AnimResource(AnimationType.VAP, url))
     }
 

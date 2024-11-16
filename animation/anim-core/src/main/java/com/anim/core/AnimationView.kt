@@ -6,7 +6,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 
 /**
- * 一个聚合的动画组件，包含svga、vap、pag三种组件
+ * 一个聚合的动画组件，支持播放svga、vap、pag、gif
  */
 class AnimationView(context: Context, attrs: AttributeSet?) :
     FrameLayout(context, attrs) {
@@ -15,7 +15,7 @@ class AnimationView(context: Context, attrs: AttributeSet?) :
 
     private var mCallback: AnimationCallback? = null
     private var mLoops: Int = 1
-    private var mClearsAfterDetached: Boolean = false
+    private var mClearsAfterDetached: Boolean = true
     private var mScaleType: ImageView.ScaleType = ImageView.ScaleType.CENTER_CROP
 
     private var assetsResource: AnimResource? = null
@@ -33,7 +33,7 @@ class AnimationView(context: Context, attrs: AttributeSet?) :
 
         mLoops = typedArray.getInt(R.styleable.AnimationView_loopCount, 1)
         mClearsAfterDetached =
-            typedArray.getBoolean(R.styleable.AnimationView_clearsAfterDetached, false)
+            typedArray.getBoolean(R.styleable.AnimationView_clearsAfterDetached, true)
         val source = typedArray.getString(R.styleable.AnimationView_source)
         val type = typedArray.getInt(R.styleable.AnimationView_type, -1)
 
@@ -43,7 +43,7 @@ class AnimationView(context: Context, attrs: AttributeSet?) :
                 1 -> AnimationType.SVGA
                 2 -> AnimationType.PAG
                 3 -> AnimationType.VAP
-                else -> AnimationType.NONE
+                else -> AnimationType.SVGA
             }
             assetsResource = AnimResource(resType, "file:///android_asset/$source")
         }
@@ -65,6 +65,28 @@ class AnimationView(context: Context, attrs: AttributeSet?) :
 
     fun setCallback(callback: AnimationCallback?) {
         mCallback = callback
+    }
+
+    /**
+     * 加载assets文件资源
+     */
+    fun startWithAssets(name: String, type: AnimationType = AnimationType.SVGA) {
+        val resource = AnimResource(type, "file:///android_asset/$name")
+        start(resource)
+    }
+
+    /**
+     * 根据url后缀名推断类型
+     */
+    fun start(url: String) {
+        val type = when {
+            url.endsWith(".gif") -> AnimationType.GIF
+            url.endsWith(".svga") -> AnimationType.SVGA
+            url.endsWith(".mp4") -> AnimationType.VAP
+            url.endsWith(".pag") -> AnimationType.PAG
+            else -> AnimationType.NONE
+        }
+        start(AnimResource(type, url))
     }
 
     fun start(resource: AnimResource) {

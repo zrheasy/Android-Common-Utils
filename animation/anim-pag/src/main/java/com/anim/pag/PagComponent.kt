@@ -8,6 +8,7 @@ import com.anim.core.AnimationDownloader
 import com.anim.core.AnimationType
 import org.libpag.PAGImageView
 import org.libpag.PAGScaleMode
+import java.io.File
 
 class PagComponent : AnimationComponent(), PAGImageView.PAGImageViewListener {
     private var mPagView: PAGImageView? = null
@@ -34,13 +35,7 @@ class PagComponent : AnimationComponent(), PAGImageView.PAGImageViewListener {
         pagView.setScaleMode(PAGScaleMode.LetterBox)
         pagView.addListener(this)
 
-        download(pagView.context, resource.resourceUrl, onError = this::notifyError) {
-            runOnUiThread {
-                pagView.setPath(it.path)
-                pagView.play()
-                pagView.isVisible = true
-            }
-        }
+        download(pagView.context, resource.resourceUrl)
     }
 
     override fun onRestart(resource: AnimResource) {
@@ -49,12 +44,19 @@ class PagComponent : AnimationComponent(), PAGImageView.PAGImageViewListener {
             return
         }
         val pagView = mPagView!!
-        download(pagView.context, resource.resourceUrl, onError = this::notifyError) {
-            runOnUiThread {
-                pagView.setPath(it.path)
-                pagView.play()
-                pagView.isVisible = true
+        download(pagView.context, resource.resourceUrl)
+    }
+
+    override fun onDownloadSuccess(file: File) {
+        runOnUiThread {
+            if (mPagView == null){
+                setRunning(false)
+                return@runOnUiThread
             }
+            val pagView = mPagView!!
+            pagView.setPath(file.path)
+            pagView.play()
+            pagView.isVisible = true
         }
     }
 

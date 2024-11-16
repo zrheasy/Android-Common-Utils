@@ -14,8 +14,10 @@ import com.anim.pag.PagComponentFactory
 import com.anim.svga.SvgaComponentFactory
 import com.anim.vap.VapComponentFactory
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.didichuxing.doraemonkit.DoKit
 import com.zrh.android.common.env.AppEnvManager
@@ -82,6 +84,7 @@ class App : Application(), ActivityLifecycleCallbacks {
                         }
 
                     })
+                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.DATA))
                     .load(url)
                     .submit()
             }

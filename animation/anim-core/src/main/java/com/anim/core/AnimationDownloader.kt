@@ -1,6 +1,7 @@
 package com.anim.core
 
 import android.content.Context
+import android.graphics.Bitmap
 import java.io.File
 
 interface AnimationDownloader {

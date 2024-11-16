@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.ViewGroup
 import android.widget.ImageView
 import java.io.File
+import java.lang.ref.WeakReference
 
 abstract class AnimationComponent {
 
@@ -15,7 +16,7 @@ abstract class AnimationComponent {
     private var isRunning: Boolean = false
     private var mCallback: AnimationCallback? = null
 
-    private var mResource: AnimResource? = null
+    protected var mResource: AnimResource? = null
     protected var mLoops: Int = 1
     protected var mScaleType: ImageView.ScaleType = ImageView.ScaleType.CENTER_CROP
 
@@ -97,10 +98,34 @@ abstract class AnimationComponent {
 
     protected fun download(
         context: Context,
-        url: String,
-        onError: ((code: Int, msg: String) -> Unit)? = null,
-        onSuccess: (file: File) -> Unit
-    ){
-        AnimationConfig.download(context, url, onError, onSuccess)
+        url: String
+    ) {
+        AnimationConfig.download(
+            context,
+            url,
+            SafeOnDownloadError(this),
+            SafeOnDownloadSuccess(this)
+        )
+    }
+
+    abstract fun onDownloadSuccess(file: File)
+    open fun onDownloadFail(code: Int, msg: String){
+        notifyError(code, msg)
     }
 }
+
+class SafeOnDownloadError(component: AnimationComponent) : OnDownloadError {
+    private val weakRef = WeakReference(component)
+    override fun invoke(code: Int, msg: String) {
+        weakRef.get()?.onDownloadFail(code, msg)
+    }
+}
+
+class SafeOnDownloadSuccess(component: AnimationComponent) : OnDownloadSuccess {
+    private val weakRef = WeakReference(component)
+    override fun invoke(file: File) {
+        weakRef.get()?.onDownloadSuccess(file)
+    }
+
+}
+
