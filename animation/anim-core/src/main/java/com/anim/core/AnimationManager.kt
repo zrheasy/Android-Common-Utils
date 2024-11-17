@@ -1,5 +1,6 @@
 package com.anim.core
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -7,13 +8,25 @@ import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
-object AnimationConfig {
+@SuppressLint("StaticFieldLeak")
+object AnimationManager {
 
     private val mFactories = mutableMapOf<AnimationType, AnimationComponentFactory>()
     private var mDownloader: AnimationDownloader? = null
 
+    private lateinit var mContext: Context
+
+    fun init(context: Context) {
+        mContext = context
+    }
+
+    fun release() {
+        mFactories.values.forEach { it.onRelease() }
+    }
+
     fun registerFactory(type: AnimationType, factory: AnimationComponentFactory) {
         mFactories[type] = factory
+        factory.onInit(mContext)
     }
 
     fun registerDownloader(downloader: AnimationDownloader) {

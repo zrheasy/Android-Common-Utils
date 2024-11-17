@@ -19,6 +19,7 @@ abstract class AnimationComponent {
     protected var mResource: AnimResource? = null
     protected var mLoops: Int = 1
     protected var mScaleType: ImageView.ScaleType = ImageView.ScaleType.CENTER_CROP
+    protected var mFillMode: FillMode = FillMode.Clear
 
     fun isRunning(): Boolean = isRunning
 
@@ -34,8 +35,26 @@ abstract class AnimationComponent {
         mScaleType = scaleType
     }
 
+    fun setFillMode(mode: FillMode) {
+        mFillMode = mode
+    }
+
     fun setCallback(callback: AnimationCallback?) {
         mCallback = callback
+    }
+
+    fun notifyLoading() {
+        mHandler.post {
+            Log.d("AnimationComponent", "onLoading")
+            mCallback?.onLoading()
+        }
+    }
+
+    fun notifyStart() {
+        mHandler.post {
+            Log.d("AnimationComponent", "onStart")
+            mCallback?.onStart()
+        }
     }
 
     fun notifyError(code: Int, msg: String) {
@@ -100,7 +119,7 @@ abstract class AnimationComponent {
         context: Context,
         url: String
     ) {
-        AnimationConfig.download(
+        AnimationManager.download(
             context,
             url,
             SafeOnDownloadError(this),
@@ -109,7 +128,7 @@ abstract class AnimationComponent {
     }
 
     abstract fun onDownloadSuccess(file: File)
-    open fun onDownloadFail(code: Int, msg: String){
+    open fun onDownloadFail(code: Int, msg: String) {
         notifyError(code, msg)
     }
 }

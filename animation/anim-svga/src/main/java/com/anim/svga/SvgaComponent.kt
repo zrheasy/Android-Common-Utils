@@ -1,6 +1,5 @@
 package com.anim.svga
 
-import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -10,9 +9,10 @@ import android.view.ViewGroup
 import com.anim.core.AnimElement
 import com.anim.core.AnimResource
 import com.anim.core.AnimationComponent
-import com.anim.core.AnimationConfig
+import com.anim.core.AnimationManager
 import com.anim.core.AnimationType
 import com.anim.core.ElementType
+import com.anim.core.FillMode
 import com.anim.core.OnDownloadComplete
 import com.opensource.svgaplayer.SVGACache
 import com.opensource.svgaplayer.SVGACallback
@@ -61,15 +61,20 @@ class SvgaComponent : AnimationComponent(), SVGACallback {
         // 设置svga播放参数
         svgaView.loops = this@SvgaComponent.mLoops
         svgaView.scaleType = this@SvgaComponent.mScaleType
-        svgaView.fillMode = SVGAImageView.FillMode.Clear
+        svgaView.fillMode = when(mFillMode){
+            FillMode.Backward -> SVGAImageView.FillMode.Backward
+            FillMode.Forward -> SVGAImageView.FillMode.Forward
+            else -> SVGAImageView.FillMode.Clear
+        }
 
         // 监听回调
         svgaView.callback = this
         download(svgaView.context, resource.resourceUrl)
         // 同时预加载占位图
         resource.elements?.filter { it.type == ElementType.IMAGE }?.forEach {
-            AnimationConfig.download(svgaView.context, it.value) {}
+            AnimationManager.download(svgaView.context, it.value) {}
         }
+        notifyLoading()
     }
 
     override fun onDownloadSuccess(file: File) {
@@ -102,13 +107,13 @@ class SvgaComponent : AnimationComponent(), SVGACallback {
                     val dynamicEntity = SVGADynamicEntity()
                     // 填充文字
                     elements?.filter { it.type == ElementType.TEXT }?.forEach {
-                        dynamicEntity.setDynamicText(it.value, mPaint, it.key)
+                        dynamicEntity.setDynamicText(it.value, it.textPaint ?:mPaint , it.key)
                     }
                     // 填充图片
                     val urls = elements?.filter { it.type == ElementType.IMAGE }?.map { it.value }
                     if (urls != null) {
                         // 有占位图则先下载占位图后再开启动画
-                        AnimationConfig.downloadImages(
+                        AnimationManager.downloadImages(
                             svgaView.context, urls, WeakOnSourceReady(
                                 this@SvgaComponent,
                                 elements,
@@ -134,6 +139,7 @@ class SvgaComponent : AnimationComponent(), SVGACallback {
         runOnUiThread {
             mSvgaImageView?.setVideoItem(videoItem, dynamicEntity)
             mSvgaImageView?.startAnimation()
+            notifyStart()
         }
     }
 

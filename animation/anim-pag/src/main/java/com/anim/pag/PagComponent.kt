@@ -6,6 +6,7 @@ import com.anim.core.AnimResource
 import com.anim.core.AnimationComponent
 import com.anim.core.AnimationDownloader
 import com.anim.core.AnimationType
+import com.anim.core.FillMode
 import org.libpag.PAGImageView
 import org.libpag.PAGScaleMode
 import java.io.File
@@ -26,7 +27,7 @@ class PagComponent : AnimationComponent(), PAGImageView.PAGImageViewListener {
     }
 
     override fun onStart(resource: AnimResource) {
-        if (mPagView == null){
+        if (mPagView == null) {
             setRunning(false)
             return
         }
@@ -36,20 +37,22 @@ class PagComponent : AnimationComponent(), PAGImageView.PAGImageViewListener {
         pagView.addListener(this)
 
         download(pagView.context, resource.resourceUrl)
+        notifyLoading()
     }
 
     override fun onRestart(resource: AnimResource) {
-        if (mPagView == null){
+        if (mPagView == null) {
             setRunning(false)
             return
         }
         val pagView = mPagView!!
         download(pagView.context, resource.resourceUrl)
+        notifyLoading()
     }
 
     override fun onDownloadSuccess(file: File) {
         runOnUiThread {
-            if (mPagView == null){
+            if (mPagView == null) {
                 setRunning(false)
                 return@runOnUiThread
             }
@@ -57,6 +60,7 @@ class PagComponent : AnimationComponent(), PAGImageView.PAGImageViewListener {
             pagView.setPath(file.path)
             pagView.play()
             pagView.isVisible = true
+            notifyStart()
         }
     }
 
@@ -80,13 +84,29 @@ class PagComponent : AnimationComponent(), PAGImageView.PAGImageViewListener {
 
     override fun onAnimationEnd(p0: PAGImageView?) {
         notifyComplete {
-            mPagView?.isVisible = false
+            onAnimComplete()
         }
     }
 
     override fun onAnimationCancel(p0: PAGImageView?) {
         notifyComplete {
-            mPagView?.isVisible = false
+            onAnimComplete()
+        }
+    }
+
+    private fun onAnimComplete() {
+        when (mFillMode) {
+            FillMode.Forward -> {
+                mPagView?.setCurrentFrame(0)
+            }
+
+            FillMode.Backward -> {
+                mPagView?.setCurrentFrame(mPagView!!.numFrames() - 1)
+            }
+
+            else -> {
+                mPagView?.isVisible = false
+            }
         }
     }
 

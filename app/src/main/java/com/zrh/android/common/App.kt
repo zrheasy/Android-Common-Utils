@@ -6,7 +6,7 @@ import android.app.Application.ActivityLifecycleCallbacks
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import com.anim.core.AnimationConfig
+import com.anim.core.AnimationManager
 import com.anim.core.AnimationDownloader
 import com.anim.core.AnimationType
 import com.anim.gif.GifComponentFactory
@@ -47,11 +47,12 @@ class App : Application(), ActivityLifecycleCallbacks {
             .alwaysShowMainIcon(false)
             .build()
 
-        AnimationConfig.registerFactory(AnimationType.GIF, GifComponentFactory())
-        AnimationConfig.registerFactory(AnimationType.SVGA, SvgaComponentFactory())
-        AnimationConfig.registerFactory(AnimationType.VAP, VapComponentFactory())
-        AnimationConfig.registerFactory(AnimationType.PAG, PagComponentFactory())
-        AnimationConfig.registerDownloader(object : AnimationDownloader {
+        AnimationManager.init(this.applicationContext)
+        AnimationManager.registerFactory(AnimationType.GIF, GifComponentFactory())
+        AnimationManager.registerFactory(AnimationType.SVGA, SvgaComponentFactory())
+        AnimationManager.registerFactory(AnimationType.VAP, VapComponentFactory())
+        AnimationManager.registerFactory(AnimationType.PAG, PagComponentFactory())
+        AnimationManager.registerDownloader(object : AnimationDownloader {
             override fun download(
                 context: Context,
                 url: String,

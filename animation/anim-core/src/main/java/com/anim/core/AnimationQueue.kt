@@ -7,6 +7,14 @@ class AnimationQueue {
     private var mAnimView: AnimationView? = null
     private val mQueue = LinkedList<AnimResource>()
     private val mCallback = object : AnimationCallback {
+        override fun onLoading() {
+
+        }
+
+        override fun onStart() {
+
+        }
+
         override fun onComplete() {
             play()
         }
@@ -46,6 +54,6 @@ class AnimationQueue {
 
     fun destroy() {
         mQueue.clear()
-        mAnimView?.destroy()
+        mAnimView?.clear()
     }
 }

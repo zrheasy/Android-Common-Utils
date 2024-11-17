@@ -2,13 +2,11 @@ package com.anim.vap
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.anim.core.AnimResource
 import com.anim.core.AnimationComponent
-import com.anim.core.AnimationConfig
-import com.anim.core.AnimationDownloader
+import com.anim.core.AnimationManager
 import com.anim.core.AnimationType
 import com.tencent.qgame.animplayer.AnimConfig
 import com.tencent.qgame.animplayer.AnimView
@@ -53,6 +51,7 @@ class VapComponent : AnimationComponent(), IAnimListener {
         vapView.setFetchResource(SafeFetchSource(resource, vapView.context))
 
         download(vapView.context, resource.resourceUrl)
+        notifyLoading()
     }
 
     override fun onRestart(resource: AnimResource) {
@@ -62,6 +61,7 @@ class VapComponent : AnimationComponent(), IAnimListener {
         }
         val vapView = mVapView!!
         download(vapView.context, resource.resourceUrl)
+        notifyLoading()
     }
 
     override fun onDownloadSuccess(file: File) {
@@ -72,6 +72,7 @@ class VapComponent : AnimationComponent(), IAnimListener {
             }
             val vapView = mVapView!!
             vapView.startPlay(file)
+            notifyStart()
         }
     }
 
@@ -126,7 +127,7 @@ class VapComponent : AnimationComponent(), IAnimListener {
             if (image == null) {
                 result.invoke(null)
             } else {
-                AnimationConfig.downloadImage(
+                AnimationManager.downloadImage(
                     context,
                     image.value,
                     onError = { _, _ -> result.invoke(null) },

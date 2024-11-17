@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <attr name="source" format="string" />
+    <attr name="type" format="enum">
+        <enum name="GIF" value="0" />
+        <enum name="SVGA" value="1" />
+        <enum name="PAG" value="2" />
+        <enum name="VAP" value="3" />
+    </attr>
+    <attr name="loopCount" format="integer" />
+    <attr name="clearsAfterDetached" format="boolean" />
+    <attr name="scaleType" format="enum">
+        <enum name="CENTER_CROP" value="0" />
+        <enum name="CENTER" value="1" />
+        <enum name="FIT_XY" value="2" />
+    </attr>
     <declare-styleable name="AnimationView">
-        <attr name="source" format="string" />
-        <attr name="type" format="enum">
-            <enum name="GIF" value="0" />
-            <enum name="SVGA" value="1" />
-            <enum name="PAG" value="2" />
-            <enum name="VAP" value="3" />
-        </attr>
-        <attr name="loopCount" format="integer" />
-        <attr name="clearsAfterDetached" format="boolean" />
-        <attr name="scaleType" format="enum">
-            <enum name="CENTER_CROP" value="0" />
-            <enum name="CENTER" value="1" />
-            <enum name="FIT_XY" value="2" />
-        </attr>
+        <attr name="source"/>
+        <attr name="type"/>
+        <attr name="loopCount"/>
+        <attr name="clearsAfterDetached"/>
+        <attr name="scaleType"/>
     </declare-styleable>
 </resources>

@@ -7,6 +7,7 @@ import androidx.core.view.isVisible
 import com.anim.core.AnimResource
 import com.anim.core.AnimationComponent
 import com.anim.core.AnimationType
+import com.anim.core.FillMode
 import pl.droidsonroids.gif.AnimationListener
 import pl.droidsonroids.gif.GifDrawable
 import java.io.File
@@ -20,7 +21,11 @@ class GifComponent : AnimationComponent(){
             notifyComplete {
                 val drawable = mImageView?.drawable as? GifDrawable
                 drawable?.stop()
-                mImageView?.isVisible = false
+                when(mFillMode){
+                    FillMode.Forward -> drawable?.seekToFrame(0)
+                    FillMode.Backward -> drawable?.seekToFrame(drawable.numberOfFrames-1)
+                    else -> mImageView?.isVisible = false
+                }
             }
         }
     }
@@ -46,6 +51,7 @@ class GifComponent : AnimationComponent(){
         imageView.scaleType = mScaleType
 
         download(imageView.context, resource.resourceUrl)
+        notifyLoading()
     }
 
     override fun onRestart(resource: AnimResource) {
@@ -70,6 +76,7 @@ class GifComponent : AnimationComponent(){
             drawable.addAnimationListener(animCallback)
             drawable.start()
             mImageView?.isVisible = true
+            notifyStart()
         }
     }
 
